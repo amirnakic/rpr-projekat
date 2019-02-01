@@ -237,17 +237,16 @@ public class CompanyDAO {
         return result;
     }
 
-    public boolean equalityOfDepartments(Department d1, Department d2) {
-        if (d1.getId() == d2.getId() && d1.getName().equals(d2.getName()) && d1.getCurrentNumberOfEmployees() == d2.getCurrentNumberOfEmployees() && d1.getMaximumNumberOfEmployees() == d2.getMaximumNumberOfEmployees())
-            return true;
+    public boolean findDepartment(Department d) {
+        ObservableList<Department> departments = getDepartments();
+        for (Department department : departments)
+            if (d.getId() == department.getId())
+                return true;
         return false;
     }
 
     public void addDepartment(Department department) {
-        ObservableList<Department> departments = getDepartments();
-        for (Department d : departments)
-            if (equalityOfDepartments(department, d))
-                return;
+        if (findDepartment(department)) return;
         try {
             int id = getDepartments().size() + 1;
             start("INSERT OR REPLACE INTO department(id, name, current_number_of_employees, maximum_number_of_employees) VALUES(?, ?, ?, ?)");
@@ -265,20 +264,27 @@ public class CompanyDAO {
     }
 
     public void changeDepartment(Department department) {
-        ObservableList<Department> departments = getDepartments();
-        boolean find = false;
-        for (Department d : departments)
-            if (department.getId() == d.getId()) {
-                find = true;
-                break;
-            }
-        if (!find) return;
+        if (!findDepartment(department)) return;
         try {
             start("UPDATE department SET name = ?, current_number_of_employees = ?, maximum_number_of_employees = ? WHERE id = ?");
             statement.setString(1, department.getName());
             statement.setInt(2, department.getCurrentNumberOfEmployees());
             statement.setInt(3, department.getMaximumNumberOfEmployees());
             statement.setInt(4, department.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
+
+    public void removeDepartment(Department department) {
+        if (!findDepartment(department)) return;
+        try {
+            start("DELETE FROM department WHERE id = ?");
+            statement.setInt(1, department.getId());
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
