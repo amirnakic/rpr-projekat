@@ -263,4 +263,28 @@ public class CompanyDAO {
         }
         close();
     }
+
+    public void changeDepartment(Department department) {
+        ObservableList<Department> departments = getDepartments();
+        boolean find = false;
+        for (Department d : departments)
+            if (department.getId() == d.getId()) {
+                find = true;
+                break;
+            }
+        if (!find) return;
+        try {
+            start("UPDATE department SET name = ?, current_number_of_employees = ?, maximum_number_of_employees = ? WHERE id = ?");
+            statement.setString(1, department.getName());
+            statement.setInt(2, department.getCurrentNumberOfEmployees());
+            statement.setInt(3, department.getMaximumNumberOfEmployees());
+            statement.setInt(4, department.getId());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
 }
