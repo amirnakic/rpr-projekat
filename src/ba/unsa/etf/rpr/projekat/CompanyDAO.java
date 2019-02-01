@@ -236,4 +236,31 @@ public class CompanyDAO {
         close();
         return result;
     }
+
+    public boolean equalityOfDepartments(Department d1, Department d2) {
+        if (d1.getId() == d2.getId() && d1.getName().equals(d2.getName()) && d1.getCurrentNumberOfEmployees() == d2.getCurrentNumberOfEmployees() && d1.getMaximumNumberOfEmployees() == d2.getMaximumNumberOfEmployees())
+            return true;
+        return false;
+    }
+
+    public void addDepartment(Department department) {
+        ObservableList<Department> departments = getDepartments();
+        for (Department d : departments)
+            if (equalityOfDepartments(department, d))
+                return;
+        try {
+            int id = getDepartments().size() + 1;
+            start("INSERT OR REPLACE INTO department(id, name, current_number_of_employees, maximum_number_of_employees) VALUES(?, ?, ?, ?)");
+            statement.setInt(1, id);
+            statement.setString(2, department.getName());
+            statement.setInt(3, department.getCurrentNumberOfEmployees());
+            statement.setInt(4, department.getMaximumNumberOfEmployees());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
 }
