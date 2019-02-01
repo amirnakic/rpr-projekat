@@ -146,4 +146,34 @@ public class CompanyDAO {
         close();
         return result;
     }
+
+    public ObservableList<Vacation> getVacations() {
+        ObservableList<Vacation> result = FXCollections.observableArrayList();
+        ObservableList<Employee> employees = getEmployees();
+        try {
+            start("SELECT * FROM vacation");
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Vacation v = new Vacation();
+                v.setId(rs.getInt(1));
+                v.setStartOfVacation(rs.getDate(2).toLocalDate());
+                v.setEndOfVacation(rs.getDate(3).toLocalDate());
+                int id0fEmployee = rs.getInt(4);
+                for (Employee e : employees)
+                    if (e.getId() == id0fEmployee) {
+                        v.setEmployee(e);
+                        break;
+                    }
+                result.add(v);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            close();
+            return result;
+        }
+        Comparator<Vacation> comparator = Comparator.comparingInt(Vacation::getId);
+        result.sort(comparator);
+        close();
+        return result;
+    }
 }
