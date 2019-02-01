@@ -113,4 +113,37 @@ public class CompanyDAO {
         close();
         return result;
     }
+
+    public ObservableList<Salary> getSalaries() {
+        ObservableList<Salary> result = FXCollections.observableArrayList();
+        ObservableList<Employee> employees = getEmployees();
+        try {
+            start("SELECT * FROM salary");
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Salary s = new Salary();
+                s.setId(rs.getInt(1));
+                s.setBase(rs.getInt(2));
+                s.setCoefficient(rs.getInt(3));
+                s.setTaxes(rs.getInt(4));
+                s.setContributions(rs.getInt(5));
+                s.setMealAllowances(rs.getInt(6));
+                int idOfEmployee = rs.getInt(7);
+                for (Employee e : employees)
+                    if (e.getId() == idOfEmployee) {
+                        s.setEmployee(e);
+                        break;
+                    }
+                result.add(s);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            close();
+            return result;
+        }
+        Comparator<Salary> comparator = Comparator.comparingInt(Salary::getId);
+        result.sort(comparator);
+        close();
+        return result;
+    }
 }
