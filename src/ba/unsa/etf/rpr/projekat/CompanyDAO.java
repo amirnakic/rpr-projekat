@@ -67,12 +67,10 @@ public class CompanyDAO {
         return result;
     }
 
-    public ObservableList<Employee> getEmployees() {
-        ObservableList<Employee> result = FXCollections.observableArrayList();
+    public ObservableList<Employee> getEmployeesFromResultSet(ResultSet rs) {
         ObservableList<Department> departments = getDepartments();
+        ObservableList<Employee> result = FXCollections.observableArrayList();
         try {
-            start("SELECT * FROM employee");
-            ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Employee e = new Employee();
                 e.setId(rs.getInt(1));
@@ -103,13 +101,26 @@ public class CompanyDAO {
                     }
                 result.add(e);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return result;
+        }
+        Comparator<Employee> comparator = Comparator.comparingInt(Employee::getId);
+        result.sort(comparator);
+        return result;
+    }
+
+    public ObservableList<Employee> getEmployees() {
+        ObservableList<Employee> result = FXCollections.observableArrayList();
+        try {
+            start("SELECT * FROM employee");
+            ResultSet rs = statement.executeQuery();
+            result = getEmployeesFromResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
             close();
             return result;
         }
-        Comparator<Employee> comparator = Comparator.comparingInt(Employee::getId);
-        result.sort(comparator);
         close();
         return result;
     }
@@ -395,38 +406,28 @@ public class CompanyDAO {
             start("SELECT * FROM employee WHERE employee.department = ?");
             statement.setInt(1, department.getId());
             ResultSet rs = statement.executeQuery();
-            while (rs.next()) {
-                Employee e = new Employee();
-                e.setId(rs.getInt(1));
-                e.setName(rs.getString(2));
-                e.setSurname(rs.getString(3));
-                e.setPhoneNumber(rs.getString(4));
-                e.setEmailAddress(rs.getString(5));
-                e.setRole(rs.getString(6));
-                e.setQualifications(rs.getString(7));
-                e.setWorkExperience(rs.getInt(8));
-                e.setVacationDaysPerYear(rs.getInt(9));
-                e.setDateOfBirth(rs.getDate(10).toLocalDate());
-                e.setDateOfEmployment(rs.getDate(11).toLocalDate());
-                if (rs.getInt(12) == 1)
-                    e.setVacation(TRUE);
-                else e.setVacation(FALSE);
-                if (rs.getInt(13) == 1)
-                    e.setSickLeave(TRUE);
-                else e.setSickLeave(FALSE);
-                if (rs.getInt(14) == 1)
-                    e.setUnpaidLeave(TRUE);
-                else e.setUnpaidLeave(FALSE);
-                e.setDepartment(department);
-                result.add(e);
-            }
+            result = getEmployeesFromResultSet(rs);
         } catch (Exception e) {
             e.printStackTrace();
             close();
             return result;
         }
-        Comparator<Employee> comparator = Comparator.comparingInt(Employee::getId);
-        result.sort(comparator);
+        close();
+        return result;
+    }
+
+    public ObservableList<Employee> getEmployeesOnVacation() {
+        ObservableList<Employee> result = FXCollections.observableArrayList();
+        try {
+            start("SELECT * FROM employee WHERE employee.vacation = ?");
+            statement.setInt(1, 1);
+            ResultSet rs = statement.executeQuery();
+            result = getEmployeesFromResultSet(rs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return result;
+        }
         close();
         return result;
     }
