@@ -431,4 +431,36 @@ public class CompanyDAO {
         close();
         return result;
     }
+
+    public ObservableList<Employee> getEmployeesOnSickLeave() {
+        ObservableList<Employee> result = FXCollections.observableArrayList();
+        try {
+            start("SELECT * FROM employee WHERE employee.sick_leave = ?");
+            statement.setInt(1, 1);
+            ResultSet rs = statement.executeQuery();
+            result = getEmployeesFromResultSet(rs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return result;
+        }
+        close();
+        return result;
+    }
+
+    public ObservableList<Employee> getEmployeesOnUnpaidLeave() {
+        ObservableList<Employee> result = FXCollections.observableArrayList();
+        try {
+            start("SELECT * FROM employee WHERE employee.unpaid_leave = ?");
+            statement.setInt(1, 1);
+            ResultSet rs = statement.executeQuery();
+            result = getEmployeesFromResultSet(rs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return result;
+        }
+        close();
+        return result;
+    }
 }
