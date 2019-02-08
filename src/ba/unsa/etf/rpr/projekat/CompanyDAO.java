@@ -305,9 +305,10 @@ public class CompanyDAO {
     public void addEmployee(Employee employee) {
         if (findEmployee(employee)) return;
         try {
+            int id = getEmployees().size() + 1;
             start("INSERT OR REPLACE INTO employee(id, name, surname, phone_number, email_address, role, qualifications, work_experience, vacation_days_per_year, " +
                     "date_of_birth, date_of_employment, vacation, sick_leave, unpaid_leave, department) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            statement.setInt(1, employee.getId());
+            statement.setInt(1, id);
             statement.setString(2, employee.getName());
             statement.setString(3, employee.getSurname());
             statement.setString(4, employee.getPhoneNumber());
@@ -328,6 +329,42 @@ public class CompanyDAO {
                 statement.setInt(14, 1);
             else statement.setInt(14, 0);
             statement.setInt(15, employee.getDepartment().getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
+
+    public void changeEmployee(Employee employee) {
+        if (findEmployee(employee)) return;
+        try {
+            start("UPDATE employee SET name = ?, surname = ?, phone_number = ?, email_address = ?, role = ?, qualifications = ?," +
+                    "work_experience = ?, vacation_days_per_year = ?, date_of_birth = ?, date_of_employment = ?, vacation = ?, sick_leave = ?," +
+                    "unpaid_leave = ?, department = ? WHERE id = ?");
+            statement.setString(1, employee.getName());
+            statement.setString(2, employee.getSurname());
+            statement.setString(3, employee.getPhoneNumber());
+            statement.setString(4, employee.getEmailAddress());
+            statement.setString(5, employee.getRole());
+            statement.setString(6, employee.getQualifications());
+            statement.setInt(7, employee.getWorkExperience());
+            statement.setInt(8, employee.getVacationDaysPerYear());
+            statement.setDate(9, Date.valueOf(employee.getDateOfBirth()));
+            statement.setDate(10, Date.valueOf(employee.getDateOfEmployment()));
+            if (employee.isVacation())
+                statement.setInt(11, 1);
+            else statement.setInt(11, 0);
+            if (employee.isSickLeave())
+                statement.setInt(12, 1);
+            else statement.setInt(12, 0);
+            if (employee.isUnpaidLeave())
+                statement.setInt(13, 1);
+            else statement.setInt(13, 0);
+            statement.setInt(14, employee.getDepartment().getId());
+            statement.setInt(15, employee.getId());
             statement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
