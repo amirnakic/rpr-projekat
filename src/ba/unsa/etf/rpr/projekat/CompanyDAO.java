@@ -385,5 +385,49 @@ public class CompanyDAO {
             close();
             return;
         }
+        close();
+    }
+
+    public ObservableList<Employee> getEmployeesFromDepartment(Department department) {
+        ObservableList<Employee> result = FXCollections.observableArrayList();
+        if (!findDepartment(department)) return result;
+        try {
+            start("SELECT * FROM employee WHERE employee.department = ?");
+            statement.setInt(1, department.getId());
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Employee e = new Employee();
+                e.setId(rs.getInt(1));
+                e.setName(rs.getString(2));
+                e.setSurname(rs.getString(3));
+                e.setPhoneNumber(rs.getString(4));
+                e.setEmailAddress(rs.getString(5));
+                e.setRole(rs.getString(6));
+                e.setQualifications(rs.getString(7));
+                e.setWorkExperience(rs.getInt(8));
+                e.setVacationDaysPerYear(rs.getInt(9));
+                e.setDateOfBirth(rs.getDate(10).toLocalDate());
+                e.setDateOfEmployment(rs.getDate(11).toLocalDate());
+                if (rs.getInt(12) == 1)
+                    e.setVacation(TRUE);
+                else e.setVacation(FALSE);
+                if (rs.getInt(13) == 1)
+                    e.setSickLeave(TRUE);
+                else e.setSickLeave(FALSE);
+                if (rs.getInt(14) == 1)
+                    e.setUnpaidLeave(TRUE);
+                else e.setUnpaidLeave(FALSE);
+                e.setDepartment(department);
+                result.add(e);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return result;
+        }
+        Comparator<Employee> comparator = Comparator.comparingInt(Employee::getId);
+        result.sort(comparator);
+        close();
+        return result;
     }
 }
