@@ -293,4 +293,47 @@ public class CompanyDAO {
         }
         close();
     }
+
+    public boolean findEmployee(Employee e) {
+        ObservableList<Employee> employees = getEmployees();
+        for (Employee employee : employees)
+            if (employee.getId() == e.getId())
+                return true;
+        return false;
+    }
+
+    public void addEmployee(Employee employee) {
+        if (findEmployee(employee)) return;
+        try {
+            start("INSERT OR REPLACE INTO employee(id, name, surname, phone_number, email_address, role, qualifications, work_experience, vacation_days_per_year, " +
+                    "date_of_birth, date_of_employment, vacation, sick_leave, unpaid_leave, department) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            statement.setInt(1, employee.getId());
+            statement.setString(2, employee.getName());
+            statement.setString(3, employee.getSurname());
+            statement.setString(4, employee.getPhoneNumber());
+            statement.setString(5, employee.getEmailAddress());
+            statement.setString(6, employee.getRole());
+            statement.setString(7, employee.getQualifications());
+            statement.setInt(8, employee.getWorkExperience());
+            statement.setInt(9, employee.getVacationDaysPerYear());
+            statement.setDate(10, Date.valueOf(employee.getDateOfBirth()));
+            statement.setDate(11, Date.valueOf(employee.getDateOfEmployment()));
+            if (employee.isVacation())
+                statement.setInt(12, 1);
+            else statement.setInt(12, 0);
+            if (employee.isSickLeave())
+                statement.setInt(13, 1);
+            else statement.setInt(13, 0);
+            if (employee.isUnpaidLeave())
+                statement.setInt(14, 1);
+            else statement.setInt(14, 0);
+            statement.setInt(15, employee.getDepartment().getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
 }
