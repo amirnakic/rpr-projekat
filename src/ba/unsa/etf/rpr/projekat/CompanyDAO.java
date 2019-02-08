@@ -373,4 +373,17 @@ public class CompanyDAO {
         }
         close();
     }
+
+    public void removeEmployee(Employee employee) {
+        if (!findEmployee(employee)) return;
+        try {
+            start("DELETE FROM employee WHERE id = ?");
+            statement.setInt(1, employee.getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+    }
 }
