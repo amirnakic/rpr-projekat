@@ -1,19 +1,23 @@
 package ba.unsa.etf.rpr.projekat;
 
+import java.time.LocalDate;
+
 public class Salary {
     private int id, base, coefficient, taxes, contributions, mealAllowances;
+    private LocalDate date;
     private Employee employee;
 
     public Salary() {
     }
 
-    public Salary(int id, int base, int coefficient, int taxes, int contributions, int mealAllowances, Employee employee) {
+    public Salary(int id, int base, int coefficient, int taxes, int contributions, int mealAllowances, LocalDate date, Employee employee) {
         this.id = id;
         this.base = base;
         this.coefficient = coefficient;
         this.taxes = taxes;
         this.contributions = contributions;
         this.mealAllowances = mealAllowances;
+        this.date = date;
         this.employee = employee;
     }
 
@@ -63,6 +67,14 @@ public class Salary {
 
     public void setMealAllowances(int mealAllowances) {
         this.mealAllowances = mealAllowances;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public Employee getEmployee() {
