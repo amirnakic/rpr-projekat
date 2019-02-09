@@ -485,6 +485,43 @@ public class CompanyDAO {
         return result;
     }
 
+    public void sendEmployeeOnSickLeave(SickLeave sickLeave) {
+        if (!findEmployee(sickLeave.getEmployee())) return;
+        if (sickLeave.getEmployee().isVacation()) return;
+        sickLeave.getEmployee().setVacation(TRUE);
+        changeEmployee(sickLeave.getEmployee());
+        try {
+            start("INSERT OR REPLACE INTO sick_leave(id, start_of_absence, end_of_absence, employee) VALUES(?, ?, null, ?)");
+            statement.setInt(1, sickLeave.getId());
+            statement.setDate(2, Date.valueOf(sickLeave.getStartOfAbsence()));
+            statement.setInt(4, sickLeave.getEmployee().getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
+
+    public void getEmployeeBackFromSickLeave(SickLeave sickLeave) {
+        if (!findEmployee(sickLeave.getEmployee())) return;
+        if (!sickLeave.getEmployee().isVacation()) return;
+        sickLeave.getEmployee().setVacation(FALSE);
+        changeEmployee(sickLeave.getEmployee());
+        try {
+            start("UPDATE sick_leave SET end_of_vacation = ? WHERE id = ?");
+            statement.setDate(1, Date.valueOf(sickLeave.getEndOfAbsence()));
+            statement.setInt(2, sickLeave.getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
+
     public ObservableList<Employee> getEmployeesOnUnpaidLeave() {
         ObservableList<Employee> result = FXCollections.observableArrayList();
         try {
