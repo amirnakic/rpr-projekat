@@ -432,6 +432,43 @@ public class CompanyDAO {
         return result;
     }
 
+    public void sendEmployeeOnVacation(Vacation vacation) {
+        if (!findEmployee(vacation.getEmployee())) return;
+        if (vacation.getEmployee().isVacation()) return;
+        vacation.getEmployee().setVacation(TRUE);
+        changeEmployee(vacation.getEmployee());
+        try {
+            start("INSERT OR REPLACE INTO vacation(id, start_of_vacation, end_of_vacation, employee) VALUES(?, ?, null, ?)");
+            statement.setInt(1, vacation.getId());
+            statement.setDate(2, Date.valueOf(vacation.getStartOfVacation()));
+            statement.setInt(4, vacation.getEmployee().getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
+
+    public void getEmployeeBackFromVacation(Vacation vacation) {
+        if (!findEmployee(vacation.getEmployee())) return;
+        if (!vacation.getEmployee().isVacation()) return;
+        vacation.getEmployee().setVacation(FALSE);
+        changeEmployee(vacation.getEmployee());
+        try {
+            start("UPDATE vacation SET end_of_vacation = ? WHERE id = ?");
+            statement.setDate(1, Date.valueOf(vacation.getEndOfVacation()));
+            statement.setInt(2, vacation.getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
+
     public ObservableList<Employee> getEmployeesOnSickLeave() {
         ObservableList<Employee> result = FXCollections.observableArrayList();
         try {
