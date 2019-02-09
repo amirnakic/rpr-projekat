@@ -537,4 +537,41 @@ public class CompanyDAO {
         close();
         return result;
     }
+
+    public void sendEmployeeOnUnpaidLeave(UnpaidLeave unpaidLeave) {
+        if (!findEmployee(unpaidLeave.getEmployee())) return;
+        if (unpaidLeave.getEmployee().isVacation()) return;
+        unpaidLeave.getEmployee().setVacation(TRUE);
+        changeEmployee(unpaidLeave.getEmployee());
+        try {
+            start("INSERT OR REPLACE INTO unpaid_leave(id, start_of_absence, end_of_absence, employee) VALUES(?, ?, null, ?)");
+            statement.setInt(1, unpaidLeave.getId());
+            statement.setDate(2, Date.valueOf(unpaidLeave.getStartOfAbsence()));
+            statement.setInt(4, unpaidLeave.getEmployee().getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
+
+    public void getEmployeeBackFromUnpaidLeave(UnpaidLeave unpaidLeave) {
+        if (!findEmployee(unpaidLeave.getEmployee())) return;
+        if (!unpaidLeave.getEmployee().isVacation()) return;
+        unpaidLeave.getEmployee().setVacation(FALSE);
+        changeEmployee(unpaidLeave.getEmployee());
+        try {
+            start("UPDATE unpaid_leave SET end_of_vacation = ? WHERE id = ?");
+            statement.setDate(1, Date.valueOf(unpaidLeave.getEndOfAbsence()));
+            statement.setInt(2, unpaidLeave.getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return;
+        }
+        close();
+    }
 }
