@@ -322,8 +322,9 @@ public class CompanyDAO {
         return false;
     }
 
-    public void addEmployee(Employee employee) {
-        if (findEmployee(employee)) return;
+    public void addEmployee(Employee employee) throws EmployeeException {
+        if (findEmployee(employee))
+            throw new EmployeeException("Employee " + employee.toString() + " is already registered.");
         try {
             int id = getEmployees().size() + 1;
             start("INSERT OR REPLACE INTO employee(id, name, surname, phone_number, email_address, role, qualifications, work_experience, vacation_days_per_year, " +
@@ -359,7 +360,6 @@ public class CompanyDAO {
     }
 
     public void changeEmployee(Employee employee) {
-        if (findEmployee(employee)) return;
         try {
             start("UPDATE employee SET name = ?, surname = ?, phone_number = ?, email_address = ?, role = ?, qualifications = ?," +
                     "work_experience = ?, vacation_days_per_year = ?, date_of_birth = ?, date_of_employment = ?, vacation = ?, sick_leave = ?," +
@@ -394,8 +394,9 @@ public class CompanyDAO {
         close();
     }
 
-    public void removeEmployee(Employee employee) {
-        if (!findEmployee(employee)) return;
+    public void removeEmployee(Employee employee) throws EmployeeException {
+        if (!findEmployee(employee))
+            throw new EmployeeException("Employee " + employee.toString() + " isn't registered yet.");
         try {
             start("DELETE FROM employee WHERE id = ?");
             statement.setInt(1, employee.getId());
@@ -408,9 +409,10 @@ public class CompanyDAO {
         close();
     }
 
-    public ObservableList<Employee> getEmployeesFromDepartment(Department department) {
+    public ObservableList<Employee> getEmployeesFromDepartment(Department department) throws DepartmentException {
         ObservableList<Employee> result = FXCollections.observableArrayList();
-        if (!findDepartment(department)) return result;
+        if (!findDepartment(department))
+            throw new DepartmentException("Department " + department.getName() + " doesn't exist.");
         try {
             start("SELECT * FROM employee WHERE employee.department = ?");
             statement.setInt(1, department.getId());
@@ -441,9 +443,10 @@ public class CompanyDAO {
         return result;
     }
 
-    public void sendEmployeeOnVacation(Vacation vacation) {
+    public void sendEmployeeOnVacation(Vacation vacation) throws EmployeeException {
         if (!findEmployee(vacation.getEmployee())) return;
-        if (vacation.getEmployee().isVacation()) return;
+        if (vacation.getEmployee().isVacation())
+            throw new EmployeeException("Employee " + vacation.getEmployee().toString() + " is already on vacation.");
         vacation.getEmployee().setVacation(TRUE);
         changeEmployee(vacation.getEmployee());
         try {
@@ -460,9 +463,10 @@ public class CompanyDAO {
         close();
     }
 
-    public void getEmployeeBackFromVacation(Vacation vacation) {
+    public void getEmployeeBackFromVacation(Vacation vacation) throws EmployeeException {
         if (!findEmployee(vacation.getEmployee())) return;
-        if (!vacation.getEmployee().isVacation()) return;
+        if (!vacation.getEmployee().isVacation())
+            throw new EmployeeException("Employee " + vacation.getEmployee().toString() + " isn't currently on vacation.");
         vacation.getEmployee().setVacation(FALSE);
         changeEmployee(vacation.getEmployee());
         try {
@@ -494,9 +498,10 @@ public class CompanyDAO {
         return result;
     }
 
-    public void sendEmployeeOnSickLeave(SickLeave sickLeave) {
+    public void sendEmployeeOnSickLeave(SickLeave sickLeave) throws EmployeeException {
         if (!findEmployee(sickLeave.getEmployee())) return;
-        if (sickLeave.getEmployee().isVacation()) return;
+        if (sickLeave.getEmployee().isSickLeave())
+            throw new EmployeeException("Employee " + sickLeave.getEmployee().toString() + " is already on sick leave.");
         sickLeave.getEmployee().setVacation(TRUE);
         changeEmployee(sickLeave.getEmployee());
         try {
@@ -513,9 +518,10 @@ public class CompanyDAO {
         close();
     }
 
-    public void getEmployeeBackFromSickLeave(SickLeave sickLeave) {
+    public void getEmployeeBackFromSickLeave(SickLeave sickLeave) throws EmployeeException {
         if (!findEmployee(sickLeave.getEmployee())) return;
-        if (!sickLeave.getEmployee().isVacation()) return;
+        if (!sickLeave.getEmployee().isSickLeave())
+            throw new EmployeeException("Employee " + sickLeave.getEmployee().toString() + " isn't currently on sick leave.");
         sickLeave.getEmployee().setVacation(FALSE);
         changeEmployee(sickLeave.getEmployee());
         try {
@@ -547,9 +553,10 @@ public class CompanyDAO {
         return result;
     }
 
-    public void sendEmployeeOnUnpaidLeave(UnpaidLeave unpaidLeave) {
+    public void sendEmployeeOnUnpaidLeave(UnpaidLeave unpaidLeave) throws EmployeeException {
         if (!findEmployee(unpaidLeave.getEmployee())) return;
-        if (unpaidLeave.getEmployee().isVacation()) return;
+        if (unpaidLeave.getEmployee().isUnpaidLeave())
+            throw new EmployeeException("Employee " + unpaidLeave.getEmployee().toString() + " is already on unpaid leave.");
         unpaidLeave.getEmployee().setVacation(TRUE);
         changeEmployee(unpaidLeave.getEmployee());
         try {
@@ -566,9 +573,10 @@ public class CompanyDAO {
         close();
     }
 
-    public void getEmployeeBackFromUnpaidLeave(UnpaidLeave unpaidLeave) {
+    public void getEmployeeBackFromUnpaidLeave(UnpaidLeave unpaidLeave) throws EmployeeException {
         if (!findEmployee(unpaidLeave.getEmployee())) return;
-        if (!unpaidLeave.getEmployee().isVacation()) return;
+        if (!unpaidLeave.getEmployee().isUnpaidLeave())
+            throw new EmployeeException("Employee " + unpaidLeave.getEmployee().toString() + " isn't currently on unpaid leave.");
         unpaidLeave.getEmployee().setVacation(FALSE);
         changeEmployee(unpaidLeave.getEmployee());
         try {
