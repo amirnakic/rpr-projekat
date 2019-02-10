@@ -4,10 +4,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 public class CompanyDAO {
     private Connection conn;
@@ -443,16 +447,64 @@ public class CompanyDAO {
         return result;
     }
 
-    public void sendEmployeeOnVacation(Vacation vacation) throws EmployeeException {
+    public long numberOfUsedVacationDaysThisYear(Employee employee) {
+        long result = 0;
+        try {
+            start("SELECT * FROM vacation WHERE vacation.employee = ?");
+            statement.setInt(1, employee.getId());
+            ResultSet rs = statement.executeQuery();
+            List<Vacation> vacationsThisYear = new ArrayList<>();
+            int currentYear = LocalDate.now().getYear();
+            while (rs.next()) {
+                LocalDate start = rs.getDate(2).toLocalDate(), end = rs.getDate(3).toLocalDate();
+                if (start.getYear() == currentYear || end.getYear() == currentYear) {
+                    Vacation v = new Vacation();
+                    v.setId(rs.getInt(1));
+                    v.setStartOfVacation(start);
+                    v.setEndOfVacation(end);
+                    v.setEmployee(employee);
+                    vacationsThisYear.add(v);
+                }
+            }
+            for (Vacation v : vacationsThisYear) {
+                if (v.getStartOfVacation().getYear() != currentYear)
+                    result += DAYS.between(LocalDate.of(currentYear, 1, 1), v.getEndOfVacation());
+                else if (v.getEndOfVacation().getYear() != currentYear)
+                    result += DAYS.between(v.getStartOfVacation(), LocalDate.of(currentYear, 12, 31));
+                else
+                    result += DAYS.between(v.getStartOfVacation(), v.getEndOfVacation());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+            return result;
+        }
+        close();
+        return result;
+    }
+
+    public void sendEmployeeOnVacation(Vacation vacation) throws EmployeeException, VacationException {
         if (!findEmployee(vacation.getEmployee())) return;
         if (vacation.getEmployee().isVacation())
             throw new EmployeeException("Employee " + vacation.getEmployee().toString() + " is already on vacation.");
+        int currentYear = LocalDate.now().getYear();
+        LocalDate start = vacation.getStartOfVacation(), end = vacation.getEndOfVacation();
+        long daysBetween1 = 0, daysBetween2 = 0;
+        if (start.getYear() != currentYear && end.getYear() == currentYear)
+            daysBetween1 = DAYS.between(LocalDate.of(currentYear, 1, 1), end);
+        else if (start.getYear() == currentYear && end.getYear() != currentYear) {
+            daysBetween1 = DAYS.between(start, LocalDate.of(currentYear, 12, 31));
+            daysBetween2 = DAYS.between(LocalDate.of(currentYear + 1, 1, 1), end);
+        } else daysBetween1 = DAYS.between(start, end);
+        if (daysBetween1 + numberOfUsedVacationDaysThisYear(vacation.getEmployee()) > vacation.getEmployee().getVacationDaysPerYear() || daysBetween2 > vacation.getEmployee().getVacationDaysPerYear())
+            throw new VacationException("Number of days in this vacation overflow allowed number of vacation days per year for this employee.");
         vacation.getEmployee().setVacation(TRUE);
         changeEmployee(vacation.getEmployee());
         try {
-            start("INSERT OR REPLACE INTO vacation(id, start_of_vacation, end_of_vacation, employee) VALUES(?, ?, null, ?)");
+            start("INSERT OR REPLACE INTO vacation(id, start_of_vacation, end_of_vacation, employee) VALUES(?, ?, ?, ?)");
             statement.setInt(1, vacation.getId());
             statement.setDate(2, Date.valueOf(vacation.getStartOfVacation()));
+            statement.setDate(3, Date.valueOf(vacation.getEndOfVacation()));
             statement.setInt(4, vacation.getEmployee().getId());
             statement.executeUpdate();
         } catch (Exception e) {
