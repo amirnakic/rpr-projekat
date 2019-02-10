@@ -256,8 +256,9 @@ public class CompanyDAO {
         return false;
     }
 
-    public void addDepartment(Department department) {
-        if (findDepartment(department)) return;
+    public void addDepartment(Department department) throws DepartmentException {
+        if (findDepartment(department))
+            throw new DepartmentException("Department " + department.getName() + " already exists.");
         try {
             int id = getDepartments().size() + 1;
             start("INSERT OR REPLACE INTO department(id, name, current_number_of_employees, maximum_number_of_employees) VALUES(?, ?, ?, ?)");
@@ -275,7 +276,6 @@ public class CompanyDAO {
     }
 
     public void changeDepartment(Department department) {
-        if (!findDepartment(department)) return;
         try {
             start("UPDATE department SET name = ?, current_number_of_employees = ?, maximum_number_of_employees = ? WHERE id = ?");
             statement.setString(1, department.getName());
@@ -291,8 +291,17 @@ public class CompanyDAO {
         close();
     }
 
-    public void removeDepartment(Department department) {
-        if (!findDepartment(department)) return;
+    public void removeDepartment(Department department) throws DepartmentException {
+        if (!findDepartment(department))
+            throw new DepartmentException("Department " + department.getName() + " doesn't exist.");
+        ObservableList<Employee> employees = getEmployees();
+        boolean isEmpty = true;
+        for (Employee e : employees) {
+            if (e.getDepartment().getId() == department.getId()) {
+                isEmpty = false;
+            }
+        }
+        if (!isEmpty) throw new DepartmentException("Department " + department.getName() + " isn't empty.");
         try {
             start("DELETE FROM department WHERE id = ?");
             statement.setInt(1, department.getId());
