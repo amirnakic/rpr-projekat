@@ -326,9 +326,21 @@ public class CompanyDAO {
         return false;
     }
 
+    public boolean isDepartmentAvailableForNewEmployees(Department department) {
+        ObservableList<Department> departments = getDepartments();
+        for (Department d : departments) {
+            if (d.getId() == department.getId())
+                if (d.getCurrentNumberOfEmployees() + 1 > d.getMaximumNumberOfEmployees())
+                    return false;
+        }
+        return true;
+    }
+
     public void addEmployee(Employee employee) throws EmployeeException {
-        if (findEmployee(employee))
-            throw new EmployeeException("Employee " + employee.toString() + " is already registered.");
+        if (!isDepartmentAvailableForNewEmployees(employee.getDepartment()))
+            throw new EmployeeException("Employee " + employee.toString() + " can't be registered because department " + employee.getName() + " is already full.");
+        employee.getDepartment().setCurrentNumberOfEmployees(employee.getDepartment().getCurrentNumberOfEmployees() + 1);
+        changeDepartment(employee.getDepartment());
         try {
             int id = getEmployees().size() + 1;
             start("INSERT OR REPLACE INTO employee(id, name, surname, phone_number, email_address, role, qualifications, work_experience, vacation_days_per_year, " +
@@ -505,8 +517,9 @@ public class CompanyDAO {
         vacation.getEmployee().setVacation(TRUE);
         changeEmployee(vacation.getEmployee());
         try {
+            int id = getVacations().size() + 1;
             start("INSERT OR REPLACE INTO vacation(id, start_of_vacation, end_of_vacation, employee) VALUES(?, ?, ?, ?)");
-            statement.setInt(1, vacation.getId());
+            statement.setInt(1, id);
             statement.setDate(2, Date.valueOf(vacation.getStartOfVacation()));
             statement.setDate(3, Date.valueOf(vacation.getEndOfVacation()));
             statement.setInt(4, vacation.getEmployee().getId());
@@ -527,7 +540,7 @@ public class CompanyDAO {
         changeEmployee(vacation.getEmployee());
         try {
             start("UPDATE vacation SET end_of_vacation = ? WHERE id = ?");
-            statement.setDate(1, Date.valueOf(LocalDate.now()));
+            statement.setDate(1, Date.valueOf(vacation.getEndOfVacation()));
             statement.setInt(2, vacation.getId());
             statement.executeUpdate();
         } catch (Exception e) {
@@ -565,8 +578,9 @@ public class CompanyDAO {
         sickLeave.getEmployee().setVacation(TRUE);
         changeEmployee(sickLeave.getEmployee());
         try {
+            int id = getSickLeaves().size() + 1;
             start("INSERT OR REPLACE INTO sick_leave(id, start_of_absence, end_of_absence, employee) VALUES(?, ?, null, ?)");
-            statement.setInt(1, sickLeave.getId());
+            statement.setInt(1, id);
             statement.setDate(2, Date.valueOf(sickLeave.getStartOfAbsence()));
             statement.setInt(4, sickLeave.getEmployee().getId());
             statement.executeUpdate();
@@ -624,8 +638,9 @@ public class CompanyDAO {
         unpaidLeave.getEmployee().setVacation(TRUE);
         changeEmployee(unpaidLeave.getEmployee());
         try {
+            int id = getUnpaidLeaves().size() + 1;
             start("INSERT OR REPLACE INTO unpaid_leave(id, start_of_absence, end_of_absence, employee) VALUES(?, ?, null, ?)");
-            statement.setInt(1, unpaidLeave.getId());
+            statement.setInt(1, id);
             statement.setDate(2, Date.valueOf(unpaidLeave.getStartOfAbsence()));
             statement.setInt(4, unpaidLeave.getEmployee().getId());
             statement.executeUpdate();
@@ -652,6 +667,26 @@ public class CompanyDAO {
             e.printStackTrace();
             close();
             return;
+        }
+        close();
+    }
+
+    public void addSalary(Salary s) {
+        try {
+            int id = getSalaries().size() + 1;
+            start("INSERT OR REPLACE INTO salary(id, base, coefficient, taxes, contributions, meal_allowances, date, employee) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
+            statement.setInt(1, s.getId());
+            statement.setInt(2, s.getBase());
+            statement.setInt(3, s.getCoefficient());
+            statement.setInt(4, s.getTaxes());
+            statement.setInt(5, s.getContributions());
+            statement.setInt(6, s.getMealAllowances());
+            statement.setDate(7, Date.valueOf(s.getDate()));
+            statement.setInt(8, s.getEmployee().getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
         }
         close();
     }
