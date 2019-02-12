@@ -14,7 +14,7 @@ import static java.lang.Boolean.TRUE;
 import static java.time.temporal.ChronoUnit.DAYS;
 
 public class CompanyDAO {
-    private Connection conn;
+    private Connection conn = null;
     private PreparedStatement statement;
 
     public CompanyDAO() {
@@ -30,7 +30,7 @@ public class CompanyDAO {
 
     public void start(String s) {
         try {
-            String url = "jdbc:sqllite:database.db";
+            String url = "jdbc:sqlite:company.db";
             conn = DriverManager.getConnection(url);
             prepareStatement(s);
         } catch (SQLException e) {
@@ -50,7 +50,7 @@ public class CompanyDAO {
     public ObservableList<Department> getDepartments() {
         ObservableList<Department> result = FXCollections.observableArrayList();
         try {
-            start("SELECT * FORM department");
+            start("SELECT * FROM department");
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 Department d = new Department();
