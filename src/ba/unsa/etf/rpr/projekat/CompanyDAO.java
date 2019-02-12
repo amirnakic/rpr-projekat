@@ -691,7 +691,7 @@ public class CompanyDAO {
         close();
     }
 
-    public ObservableList<Salary> getSalariesForEmployee(Employee employee) {
+    public ObservableList<Salary> getAllSalariesForEmployee(Employee employee) {
         ObservableList<Salary> result = FXCollections.observableArrayList();
         if (!findEmployee(employee)) return result;
         try {
@@ -718,6 +718,69 @@ public class CompanyDAO {
         Comparator<Salary> comparator = Comparator.comparingInt(Salary::getId);
         result.sort(comparator);
         close();
+        return result;
+    }
+
+    public ObservableList<Salary> getAllSalariesInOneYear(int year) {
+        ObservableList<Salary> result = FXCollections.observableArrayList(), salaries = getSalaries();
+        for (Salary s : salaries) {
+            if (s.getDate().getYear() == year)
+                result.add(s);
+        }
+        return result;
+    }
+
+    public ObservableList<Salary> getAllSalariesInOneMonth(int month, int year) {
+        ObservableList<Salary> result = FXCollections.observableArrayList(), salaries = getAllSalariesInOneYear(year);
+        for (Salary s : salaries) {
+            if (s.getDate().getMonthValue() == month)
+                result.add(s);
+        }
+        return result;
+    }
+
+    public ObservableList<Salary> getAllSalariesForEmployeeInOneYear(int year, Employee employee) {
+        ObservableList<Salary> result = FXCollections.observableArrayList(), salaries = getAllSalariesForEmployee(employee);
+        for (Salary s : salaries) {
+            if (s.getDate().getYear() == year)
+                result.add(s);
+        }
+        return result;
+    }
+
+    public Salary getSpecificSalary(int month, int year, Employee employee) {
+        ObservableList<Salary> salaries = getAllSalariesForEmployeeInOneYear(year, employee);
+        for (Salary s : salaries) {
+            if (s.getDate().getMonthValue() == month)
+                return s;
+        }
+        return null;
+    }
+
+    public ObservableList<Salary> getAllSalariesFromDepartment(Department d) {
+        ObservableList<Salary> result = FXCollections.observableArrayList(), salaries = getSalaries();
+        for (Salary s : salaries) {
+            if (s.getEmployee().getDepartment().getId() == d.getId())
+                result.add(s);
+        }
+        return result;
+    }
+
+    public ObservableList<Salary> getAllSalariesFromDepartmentInOneYear(int year, Department d) {
+        ObservableList<Salary> result = FXCollections.observableArrayList(), salaries = getAllSalariesFromDepartment(d);
+        for (Salary s : salaries) {
+            if (s.getDate().getYear() == year)
+                result.add(s);
+        }
+        return result;
+    }
+
+    public ObservableList<Salary> getAllSalariesFromDepartmentInOneMonth(int month, int year, Department d) {
+        ObservableList<Salary> result = FXCollections.observableArrayList(), salaries = getAllSalariesFromDepartmentInOneYear(year, d);
+        for (Salary s : salaries) {
+            if (s.getDate().getMonthValue() == month)
+                result.add(s);
+        }
         return result;
     }
 }
