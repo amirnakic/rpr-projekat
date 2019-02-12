@@ -483,10 +483,14 @@ public class CompanyDAO {
         return result;
     }
 
-    public void sendEmployeeOnVacation(Vacation vacation) throws EmployeeException, VacationException {
+    public void sendEmployeeOnVacation(Vacation vacation) throws VacationException {
         if (!findEmployee(vacation.getEmployee())) return;
         if (vacation.getEmployee().isVacation())
-            throw new EmployeeException("Employee " + vacation.getEmployee().toString() + " is already on vacation.");
+            throw new VacationException("Employee " + vacation.getEmployee().toString() + " is already on vacation.");
+        if (vacation.getEmployee().isSickLeave())
+            throw new VacationException("Employee " + vacation.getEmployee().toString() + " can't be sent on vacation because he's currently on sick leave.");
+        if (vacation.getEmployee().isUnpaidLeave())
+            throw new VacationException("Employee " + vacation.getEmployee().toString() + " can't be sent on vacation because he's currently on unpaid leave.");
         int currentYear = LocalDate.now().getYear();
         LocalDate start = vacation.getStartOfVacation(), end = vacation.getEndOfVacation();
         long daysBetween1 = 0, daysBetween2 = 0;
@@ -515,10 +519,10 @@ public class CompanyDAO {
         close();
     }
 
-    public void getEmployeeBackFromVacation(Vacation vacation) throws EmployeeException {
+    public void getEmployeeBackFromVacation(Vacation vacation) throws VacationException {
         if (!findEmployee(vacation.getEmployee())) return;
         if (!vacation.getEmployee().isVacation())
-            throw new EmployeeException("Employee " + vacation.getEmployee().toString() + " isn't currently on vacation.");
+            throw new VacationException("Employee " + vacation.getEmployee().toString() + " isn't currently on vacation.");
         vacation.getEmployee().setVacation(FALSE);
         changeEmployee(vacation.getEmployee());
         try {
@@ -550,10 +554,14 @@ public class CompanyDAO {
         return result;
     }
 
-    public void sendEmployeeOnSickLeave(SickLeave sickLeave) throws EmployeeException {
+    public void sendEmployeeOnSickLeave(SickLeave sickLeave) throws SickLeaveException {
         if (!findEmployee(sickLeave.getEmployee())) return;
+        if (sickLeave.getEmployee().isVacation())
+            throw new SickLeaveException("Employee " + sickLeave.getEmployee().toString() + " can't be sent on sick leave because he's currently on vacation.");
+        if (sickLeave.getEmployee().isUnpaidLeave())
+            throw new SickLeaveException("Employee " + sickLeave.getEmployee().toString() + " can't be sent on sick leave because he's currently on unpaid leave.");
         if (sickLeave.getEmployee().isSickLeave())
-            throw new EmployeeException("Employee " + sickLeave.getEmployee().toString() + " is already on sick leave.");
+            throw new SickLeaveException("Employee " + sickLeave.getEmployee().toString() + " is already on sick leave.");
         sickLeave.getEmployee().setVacation(TRUE);
         changeEmployee(sickLeave.getEmployee());
         try {
@@ -570,10 +578,10 @@ public class CompanyDAO {
         close();
     }
 
-    public void getEmployeeBackFromSickLeave(SickLeave sickLeave) throws EmployeeException {
+    public void getEmployeeBackFromSickLeave(SickLeave sickLeave) throws SickLeaveException {
         if (!findEmployee(sickLeave.getEmployee())) return;
         if (!sickLeave.getEmployee().isSickLeave())
-            throw new EmployeeException("Employee " + sickLeave.getEmployee().toString() + " isn't currently on sick leave.");
+            throw new SickLeaveException("Employee " + sickLeave.getEmployee().toString() + " isn't currently on sick leave.");
         sickLeave.getEmployee().setVacation(FALSE);
         changeEmployee(sickLeave.getEmployee());
         try {
@@ -605,10 +613,14 @@ public class CompanyDAO {
         return result;
     }
 
-    public void sendEmployeeOnUnpaidLeave(UnpaidLeave unpaidLeave) throws EmployeeException {
+    public void sendEmployeeOnUnpaidLeave(UnpaidLeave unpaidLeave) throws UnpaidLeaveException {
         if (!findEmployee(unpaidLeave.getEmployee())) return;
+        if (unpaidLeave.getEmployee().isVacation())
+            throw new UnpaidLeaveException("Employee " + unpaidLeave.getEmployee().toString() + " can't be sent on unpaid leave because he's currently on vacation.");
+        if (unpaidLeave.getEmployee().isSickLeave())
+            throw new UnpaidLeaveException("Employee " + unpaidLeave.getEmployee().toString() + " can't be sent on unpaid leave because he's currently on sick leave.");
         if (unpaidLeave.getEmployee().isUnpaidLeave())
-            throw new EmployeeException("Employee " + unpaidLeave.getEmployee().toString() + " is already on unpaid leave.");
+            throw new UnpaidLeaveException("Employee " + unpaidLeave.getEmployee().toString() + " is already on unpaid leave.");
         unpaidLeave.getEmployee().setVacation(TRUE);
         changeEmployee(unpaidLeave.getEmployee());
         try {
@@ -625,10 +637,10 @@ public class CompanyDAO {
         close();
     }
 
-    public void getEmployeeBackFromUnpaidLeave(UnpaidLeave unpaidLeave) throws EmployeeException {
+    public void getEmployeeBackFromUnpaidLeave(UnpaidLeave unpaidLeave) throws UnpaidLeaveException {
         if (!findEmployee(unpaidLeave.getEmployee())) return;
         if (!unpaidLeave.getEmployee().isUnpaidLeave())
-            throw new EmployeeException("Employee " + unpaidLeave.getEmployee().toString() + " isn't currently on unpaid leave.");
+            throw new UnpaidLeaveException("Employee " + unpaidLeave.getEmployee().toString() + " isn't currently on unpaid leave.");
         unpaidLeave.getEmployee().setVacation(FALSE);
         changeEmployee(unpaidLeave.getEmployee());
         try {
