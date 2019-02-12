@@ -523,7 +523,7 @@ public class CompanyDAO {
         changeEmployee(vacation.getEmployee());
         try {
             start("UPDATE vacation SET end_of_vacation = ? WHERE id = ?");
-            statement.setDate(1, Date.valueOf(vacation.getEndOfVacation()));
+            statement.setDate(1, Date.valueOf(LocalDate.now()));
             statement.setInt(2, vacation.getId());
             statement.executeUpdate();
         } catch (Exception e) {
