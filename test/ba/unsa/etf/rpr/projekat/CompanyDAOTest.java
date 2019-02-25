@@ -1,7 +1,6 @@
 package ba.unsa.etf.rpr.projekat;
 
 import javafx.collections.ObservableList;
-import org.assertj.core.internal.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -220,7 +219,7 @@ class CompanyDAOTest {
             e.printStackTrace();
         }
 
-        //here we test methods related with class SickLeave
+        //here we test methods related with class UnpaidLeave
         ObservableList<Employee> employees = dao.getEmployeesOnUnpaidLeave();
         assertEquals(1, employees.size());
         try {
@@ -232,4 +231,32 @@ class CompanyDAOTest {
         assertEquals(0, employees.size());
     }
 
+    @Test
+    void salary() {
+        initDb();
+        Department d1 = new Department(1, 0, 15, "Automatics and Electronics");
+        Employee e1 = new Employee(1, 10, 40, "Meho", "Mehic", "033555444",
+                "mehomehic@gmail.com", "professor", "doctor", LocalDate.of(1973, 1, 1),
+                LocalDate.of(2015, 1, 1), FALSE, FALSE, FALSE, d1);
+        Employee e2 = new Employee(2, 0, 40, "Test", "Testovic", "033555444",
+                "testtestovic@gmail.com", "professor", "doctor", LocalDate.of(1988, 1, 1),
+                LocalDate.now(), FALSE, FALSE, FALSE, d1);
+        Salary s1 = new Salary(1, 1000, 100, 100, 100, 100, LocalDate.now(), e1);
+        Salary s2 = new Salary(2, 2000, 100, 100, 100, 100, LocalDate.now(), e2);
+        try {
+            dao.addDepartment(d1);
+            dao.addEmployee(e1);
+            dao.addEmployee(e2);
+            dao.addSalary(s1);
+            dao.addSalary(s2);
+        } catch (DepartmentException de) {
+            de.printStackTrace();
+        } catch (EmployeeException e) {
+            e.printStackTrace();
+        }
+
+        //here we test some methods relatod to class Salary
+        assertEquals(1, dao.getAllSalariesForEmployeeInOneYear(2019, e1).size());
+        assertEquals(2, dao.getAllSalariesFromDepartmentInOneMonth(2, 2019, d1).size());
+    }
 }

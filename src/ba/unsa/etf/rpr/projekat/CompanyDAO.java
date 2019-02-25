@@ -130,7 +130,8 @@ public class CompanyDAO {
                 s.setTaxes(rs.getInt(4));
                 s.setContributions(rs.getInt(5));
                 s.setMealAllowances(rs.getInt(6));
-                int idOfEmployee = rs.getInt(7);
+                s.setDate(rs.getDate(7).toLocalDate());
+                int idOfEmployee = rs.getInt(8);
                 for (Employee e : employees)
                     if (e.getId() == idOfEmployee) {
                         s.setEmployee(e);
