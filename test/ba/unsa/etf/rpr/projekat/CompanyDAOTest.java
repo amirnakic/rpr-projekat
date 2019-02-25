@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDate;
 
+import static java.lang.Boolean.FALSE;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CompanyDAOTest {
@@ -74,5 +76,62 @@ class CompanyDAOTest {
         }
         departments = dao.getDepartments();
         assertEquals(4, departments.size());
+    }
+
+    @Test
+    void employees() {
+        initDb();
+        Department d1 = null;
+        Employee e1, e2 = null;
+        try {
+            d1 = new Department(1, 0, 15, "Automatics and Electronics");
+            dao.addDepartment(d1);
+            e1 = new Employee(1, 10, 40, "Meho", "Mehic", "033555444",
+                    "mehomehic@gmail.com", "professor", "doctor", LocalDate.of(1973, 1, 1),
+                    LocalDate.of(2015, 1, 1), FALSE, FALSE, FALSE, d1);
+            e2 = new Employee(2, 0, 40, "Test", "Testovic", "033555444",
+                    "testtestovic@gmail.com", "professor", "doctor", LocalDate.of(1988, 1, 1),
+                    LocalDate.now(), FALSE, FALSE, FALSE, d1);
+            dao.addEmployee(e1);
+            dao.addEmployee(e2);
+        } catch (DepartmentException de) {
+            de.printStackTrace();
+        } catch (EmployeeException e) {
+            e.printStackTrace();
+        }
+
+        //here we test methods getEmployees, getDepartments & addEmployee
+        ObservableList<Employee> employees = dao.getEmployees();
+        ObservableList<Department> departments = dao.getDepartments();
+        assertEquals(2, employees.size());
+        assertEquals("Meho", employees.get(0).getName());
+        assertEquals(2, departments.get(0).getCurrentNumberOfEmployees());
+
+        //here we test method changeEmployee
+        e2.setName("Amir");
+        dao.changeEmployee(e2);
+        departments = dao.getDepartments();
+        employees = dao.getEmployees();
+        assertEquals(2, employees.size());
+        assertEquals("Amir", employees.get(1).getName());
+
+        //here we test method removeEmployee
+        try {
+            dao.removeEmployee(e2);
+        } catch (EmployeeException e) {
+            e.printStackTrace();
+        }
+        employees = dao.getEmployees();
+        assertEquals(1, employees.size());
+        assertEquals("Mehic", employees.get(0).getSurname());
+
+        //here we test method getEmployeesFromDepartment
+        try {
+            employees = dao.getEmployeesFromDepartment(d1);
+        } catch (DepartmentException e) {
+            e.printStackTrace();
+        }
+        assertEquals(1, employees.size());
+        assertEquals("mehomehic@gmail.com", employees.get(0).getEmailAddress());
     }
 }
