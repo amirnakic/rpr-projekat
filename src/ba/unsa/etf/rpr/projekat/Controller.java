@@ -29,8 +29,15 @@ public class Controller {
     public TableColumn<Department, Integer> departmentID;
     public TableColumn<Department, String> departmentName;
     public TableColumn<Department, String> availabilityOfDepartment;
+    public TableView<Employee> employeeTable = new TableView<>();
+    public TableColumn<Employee, Integer> employeeID;
+    public TableColumn<Employee, String> employeeName;
+    public TableColumn<Employee, String> employeeRole;
+    public TableColumn<Employee, String> employeeDepartment;
+    public TableColumn<Employee, String> employeeAvailability;
     private CompanyDAO company;
     private ObjectProperty<Department> currentDepartment = new SimpleObjectProperty<>();
+    private ObjectProperty<Employee> currentEmployee = new SimpleObjectProperty<>();
 
     public Controller() {
         company = new CompanyDAO();
@@ -48,12 +55,31 @@ public class Controller {
         this.currentDepartment.set(currentDepartment);
     }
 
+    public Employee getCurrentEmployee() {
+        return currentEmployee.get();
+    }
+
+    public ObjectProperty<Employee> currentEmployeeProperty() {
+        return currentEmployee;
+    }
+
+    public void setCurrentEmployee(Employee currentEmployee) {
+        this.currentEmployee.set(currentEmployee);
+    }
+
     @FXML
     public void initialize() {
         departmentID.setCellValueFactory(new PropertyValueFactory<Department, Integer>("id"));
         departmentName.setCellValueFactory(new PropertyValueFactory<Department, String>("name"));
         availabilityOfDepartment.setCellValueFactory(cellData -> Bindings.concat(cellData.getValue().getCurrentNumberOfEmployees(), "/", cellData.getValue().getMaximumNumberOfEmployees()));
         departmentTable.setItems(company.getDepartments());
+        employeeID.setCellValueFactory(new PropertyValueFactory<Employee, Integer>("id"));
+        employeeName.setCellValueFactory(cellData -> Bindings.concat(cellData.getValue().getName(), " ", cellData.getValue().getSurname()));
+        employeeRole.setCellValueFactory(new PropertyValueFactory<Employee, String>("role"));
+        employeeDepartment.setCellValueFactory(cellData -> Bindings.concat(cellData.getValue().getDepartment().getName()));
+        employeeAvailability.setCellValueFactory(cellData -> Bindings.concat(cellData.getValue().availability()));
+        departmentTable.setItems(company.getDepartments());
+        employeeTable.setItems(company.getEmployees());
     }
 
     public void clickOnAddDepartmentButton(ActionEvent actionEvent) {
@@ -109,5 +135,29 @@ public class Controller {
                 alert1.showAndWait();
             }
         }
+    }
+
+    public void clickOnHireButton(ActionEvent actionEvent) {
+    }
+
+    public void clickOnPromoteButton(ActionEvent actionEvent) {
+    }
+
+    public void clickOnFireButton(ActionEvent actionEvent) {
+    }
+
+    public void clickOnRetireButton(ActionEvent actionEvent) {
+    }
+
+    public void clickOnVacationButton(ActionEvent actionEvent) {
+    }
+
+    public void clickOnSickLeaveButton(ActionEvent actionEvent) {
+    }
+
+    public void clickOnUnpaidLeaveButton(ActionEvent actionEvent) {
+    }
+
+    public void clickOnInfoButton(ActionEvent actionEvent) {
     }
 }

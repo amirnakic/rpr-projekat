@@ -150,6 +150,13 @@ public class Employee {
         this.department = department;
     }
 
+    public String availability() {
+        if (isVacation()) return "On vacation";
+        else if (isSickLeave()) return "On sick leave";
+        else if (isUnpaidLeave()) return "On unpaid leave";
+        return "Available";
+    }
+
     @Override
     public String toString() {
         return surname + " " + name;
