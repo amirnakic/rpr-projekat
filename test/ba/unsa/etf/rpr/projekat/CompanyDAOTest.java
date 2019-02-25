@@ -143,7 +143,6 @@ class CompanyDAOTest {
         Employee e1 = new Employee(1, 10, 40, "Meho", "Mehic", "033555444",
                 "mehomehic@gmail.com", "professor", "doctor", LocalDate.of(1973, 1, 1),
                 LocalDate.of(2015, 1, 1), FALSE, FALSE, FALSE, d1);
-        ;
         Vacation v1 = new Vacation(1, LocalDate.of(2019, 1, 1), LocalDate.of(2019, 2, 1), e1);
         try {
             dao.addDepartment(d1);
@@ -168,4 +167,39 @@ class CompanyDAOTest {
         employees = dao.getEmployeesOnVacation();
         assertEquals(0, employees.size());
     }
+
+    @Test
+    void sick_leave() {
+        initDb();
+        Department d1 = new Department(1, 0, 15, "Automatics and Electronics");
+        Employee e1 = new Employee(1, 10, 40, "Meho", "Mehic", "033555444",
+                "mehomehic@gmail.com", "professor", "doctor", LocalDate.of(1973, 1, 1),
+                LocalDate.of(2015, 1, 1), FALSE, FALSE, FALSE, d1);
+        SickLeave sl = new SickLeave(1, LocalDate.of(2019, 1, 1), LocalDate.of(2019, 1, 12), e1);
+        try {
+            dao.addDepartment(d1);
+            dao.addEmployee(e1);
+            dao.sendEmployeeOnSickLeave(sl);
+        } catch (DepartmentException de) {
+            de.printStackTrace();
+        } catch (EmployeeException e) {
+            e.printStackTrace();
+        } catch (SickLeaveException e) {
+            e.printStackTrace();
+        }
+
+        //here we test methods related with class SickLeave
+        ObservableList<Employee> employees = dao.getEmployeesOnSickLeave();
+        assertEquals(1, employees.size());
+        try {
+            dao.getEmployeeBackFromSickLeave(sl);
+        } catch (SickLeaveException e) {
+            e.printStackTrace();
+        }
+        System.out.println(sl.getEndOfAbsence());
+        employees = dao.getEmployeesOnSickLeave();
+        assertEquals(0, employees.size());
+    }
+
+
 }

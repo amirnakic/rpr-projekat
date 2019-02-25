@@ -652,13 +652,14 @@ public class CompanyDAO {
             throw new SickLeaveException("Employee " + sickLeave.getEmployee().toString() + " can't be sent on sick leave because he's currently on unpaid leave.");
         if (sickLeave.getEmployee().isSickLeave())
             throw new SickLeaveException("Employee " + sickLeave.getEmployee().toString() + " is already on sick leave.");
-        sickLeave.getEmployee().setVacation(TRUE);
+        sickLeave.getEmployee().setSickLeave(TRUE);
         changeEmployee(sickLeave.getEmployee());
         try {
             int id = getSickLeaves().size() + 1;
-            start("INSERT OR REPLACE INTO sick_leave(id, start_of_absence, end_of_absence, employee) VALUES(?, ?, null, ?)");
+            start("INSERT OR REPLACE INTO sick_leave(id, start_of_absence, end_of_absence, employee) VALUES(?, ?, ?, ?)");
             statement.setInt(1, id);
             statement.setDate(2, Date.valueOf(sickLeave.getStartOfAbsence()));
+            statement.setDate(3, Date.valueOf(sickLeave.getEndOfAbsence()));
             statement.setInt(4, sickLeave.getEmployee().getId());
             statement.executeUpdate();
         } catch (Exception e) {
@@ -673,10 +674,10 @@ public class CompanyDAO {
         if (!findEmployee(sickLeave.getEmployee())) return;
         if (!sickLeave.getEmployee().isSickLeave())
             throw new SickLeaveException("Employee " + sickLeave.getEmployee().toString() + " isn't currently on sick leave.");
-        sickLeave.getEmployee().setVacation(FALSE);
+        sickLeave.getEmployee().setSickLeave(FALSE);
         changeEmployee(sickLeave.getEmployee());
         try {
-            start("UPDATE sick_leave SET end_of_vacation = ? WHERE id = ?");
+            start("UPDATE sick_leave SET end_of_absence = ? WHERE id = ?");
             statement.setDate(1, Date.valueOf(sickLeave.getEndOfAbsence()));
             statement.setInt(2, sickLeave.getId());
             statement.executeUpdate();
@@ -742,13 +743,14 @@ public class CompanyDAO {
             throw new UnpaidLeaveException("Employee " + unpaidLeave.getEmployee().toString() + " can't be sent on unpaid leave because he's currently on sick leave.");
         if (unpaidLeave.getEmployee().isUnpaidLeave())
             throw new UnpaidLeaveException("Employee " + unpaidLeave.getEmployee().toString() + " is already on unpaid leave.");
-        unpaidLeave.getEmployee().setVacation(TRUE);
+        unpaidLeave.getEmployee().setUnpaidLeave(TRUE);
         changeEmployee(unpaidLeave.getEmployee());
         try {
             int id = getUnpaidLeaves().size() + 1;
-            start("INSERT OR REPLACE INTO unpaid_leave(id, start_of_absence, end_of_absence, employee) VALUES(?, ?, null, ?)");
+            start("INSERT OR REPLACE INTO unpaid_leave(id, start_of_absence, end_of_absence, employee) VALUES(?, ?, ?, ?)");
             statement.setInt(1, id);
             statement.setDate(2, Date.valueOf(unpaidLeave.getStartOfAbsence()));
+            statement.setDate(3, Date.valueOf(unpaidLeave.getEndOfAbsence()));
             statement.setInt(4, unpaidLeave.getEmployee().getId());
             statement.executeUpdate();
         } catch (Exception e) {
@@ -763,10 +765,10 @@ public class CompanyDAO {
         if (!findEmployee(unpaidLeave.getEmployee())) return;
         if (!unpaidLeave.getEmployee().isUnpaidLeave())
             throw new UnpaidLeaveException("Employee " + unpaidLeave.getEmployee().toString() + " isn't currently on unpaid leave.");
-        unpaidLeave.getEmployee().setVacation(FALSE);
+        unpaidLeave.getEmployee().setUnpaidLeave(FALSE);
         changeEmployee(unpaidLeave.getEmployee());
         try {
-            start("UPDATE unpaid_leave SET end_of_vacation = ? WHERE id = ?");
+            start("UPDATE unpaid_leave SET end_of_absence = ? WHERE id = ?");
             statement.setDate(1, Date.valueOf(unpaidLeave.getEndOfAbsence()));
             statement.setInt(2, unpaidLeave.getId());
             statement.executeUpdate();
