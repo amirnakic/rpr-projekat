@@ -1,6 +1,7 @@
 package ba.unsa.etf.rpr.projekat;
 
 import javafx.collections.ObservableList;
+import org.assertj.core.internal.bytebuddy.asm.Advice;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -133,5 +134,38 @@ class CompanyDAOTest {
         }
         assertEquals(1, employees.size());
         assertEquals("mehomehic@gmail.com", employees.get(0).getEmailAddress());
+    }
+
+    @Test
+    void vacation() {
+        initDb();
+        Department d1 = new Department(1, 0, 15, "Automatics and Electronics");
+        Employee e1 = new Employee(1, 10, 40, "Meho", "Mehic", "033555444",
+                "mehomehic@gmail.com", "professor", "doctor", LocalDate.of(1973, 1, 1),
+                LocalDate.of(2015, 1, 1), FALSE, FALSE, FALSE, d1);
+        ;
+        Vacation v1 = new Vacation(1, LocalDate.of(2019, 1, 1), LocalDate.of(2019, 2, 1), e1);
+        try {
+            dao.addDepartment(d1);
+            dao.addEmployee(e1);
+            dao.sendEmployeeOnVacation(v1);
+        } catch (DepartmentException de) {
+            de.printStackTrace();
+        } catch (EmployeeException e) {
+            e.printStackTrace();
+        } catch (VacationException e) {
+            e.printStackTrace();
+        }
+
+        //here we test methods related with class Vacation
+        ObservableList<Employee> employees = dao.getEmployeesOnVacation();
+        assertEquals(1, employees.size());
+        try {
+            dao.getEmployeeBackFromVacation(v1);
+        } catch (VacationException e) {
+            e.printStackTrace();
+        }
+        employees = dao.getEmployeesOnVacation();
+        assertEquals(0, employees.size());
     }
 }
