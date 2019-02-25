@@ -53,15 +53,14 @@ public class Controller {
         departmentID.setCellValueFactory(new PropertyValueFactory<Department, Integer>("id"));
         departmentName.setCellValueFactory(new PropertyValueFactory<Department, String>("name"));
         availabilityOfDepartment.setCellValueFactory(cellData -> Bindings.concat(cellData.getValue().getCurrentNumberOfEmployees(), "/", cellData.getValue().getMaximumNumberOfEmployees()));
-        ObservableList<Department> departments = company.getDepartments();
-        departmentTable.setItems(departments);
+        departmentTable.setItems(company.getDepartments());
     }
 
     public void clickOnAddDepartmentButton(ActionEvent actionEvent) {
         try {
             Stage myStage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/department.fxml"));
-            loader.setController(new DepartmentController(company, null));
+            loader.setController(new DepartmentController(company, null, this));
             Parent root = loader.load();
             myStage.setTitle("Adding a new department");
             myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
@@ -80,7 +79,7 @@ public class Controller {
         try {
             Stage myStage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/department.fxml"));
-            loader.setController(new DepartmentController(company, getCurrentDepartment()));
+            loader.setController(new DepartmentController(company, getCurrentDepartment(), this));
             Parent root = loader.load();
             myStage.setTitle("Edit of department");
             myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
@@ -101,6 +100,8 @@ public class Controller {
         if (option.get() == ButtonType.OK) {
             try {
                 company.removeDepartment(getCurrentDepartment());
+                setCurrentDepartment(null);
+                departmentTable.setItems(company.getDepartments());
             } catch (DepartmentException e) {
                 Alert alert1 = new Alert(Alert.AlertType.ERROR);
                 alert1.setTitle("Error");

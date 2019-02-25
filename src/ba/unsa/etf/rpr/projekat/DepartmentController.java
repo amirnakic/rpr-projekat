@@ -12,11 +12,13 @@ public class DepartmentController {
     public TextField maximumNumberOfEmployees;
     private CompanyDAO company;
     private Department department;
+    private Controller controller;
     private boolean edit, isNameCorrect, isNumberCorrect;
 
-    public DepartmentController(CompanyDAO c, Department d) {
+    public DepartmentController(CompanyDAO c, Department d, Controller co) {
         company = c;
         department = d;
+        controller = co;
         if (d == null) edit = false;
         else edit = true;
     }
@@ -29,6 +31,17 @@ public class DepartmentController {
         }
     }
 
+    public boolean isNumberCorrect(String s) {
+        if (s.isEmpty()) return false;
+        char[] charSequence = s.toCharArray();
+        for (int i = 0; i < charSequence.length; i++) {
+            if (!Character.isDigit(charSequence[i]))
+                return false;
+        }
+        if (Integer.parseInt(s) == 0) return false;
+        return true;
+    }
+
     public void clickOnOkButton(ActionEvent actionEvent) {
         if (!departmentName.getText().isEmpty()) {
             departmentName.getStyleClass().removeAll("fieldIncorrect");
@@ -39,7 +52,7 @@ public class DepartmentController {
             departmentName.getStyleClass().add("fieldIncorrect");
             isNameCorrect = false;
         }
-        if (Integer.parseInt(maximumNumberOfEmployees.getText()) != 0) {
+        if (isNumberCorrect(maximumNumberOfEmployees.getText())) {
             maximumNumberOfEmployees.getStyleClass().removeAll("fieldIncorrect");
             maximumNumberOfEmployees.getStyleClass().add("fieldCorrect");
             isNumberCorrect = true;
@@ -54,6 +67,7 @@ public class DepartmentController {
                 d = new Department(company.getDepartments().size() + 1, 0, Integer.parseInt(maximumNumberOfEmployees.getText()), departmentName.getText());
                 try {
                     company.addDepartment(d);
+                    controller.departmentTable.setItems(company.getDepartments());
                 } catch (DepartmentException e) {
                     Alert alert1 = new Alert(Alert.AlertType.ERROR);
                     alert1.setTitle("Error");
@@ -63,9 +77,10 @@ public class DepartmentController {
             } else {
                 d = new Department(department.getId(), department.getCurrentNumberOfEmployees(), Integer.parseInt(maximumNumberOfEmployees.getText()), departmentName.getText());
                 company.changeDepartment(d);
+                controller.departmentTable.setItems(company.getDepartments());
             }
+            clickOnCancelButton(actionEvent);
         }
-        clickOnCancelButton(actionEvent);
     }
 
     public void clickOnCancelButton(ActionEvent actionEvent) {
