@@ -31,17 +31,25 @@ class CompanyDAOTest {
     }
 
     @Test
-    void test1() {
+    void departments() {
         initDb();
+        Department d1, d2, d3, d4, d5 = null;
         try {
-            dao.addDepartment(new Department(1, 10, 15, "Automatics and Electronics"));
-            dao.addDepartment(new Department(2, 8, 15, "Energetics"));
-            dao.addDepartment(new Department(3, 15, 15, "Computer Science and Informatics"));
-            dao.addDepartment(new Department(4, 6, 15, "Telecommunication"));
-            dao.addDepartment(new Department(5, 8, 15, "Software Engineering"));
+            d1 = new Department(1, 10, 15, "Automatics and Electronics");
+            dao.addDepartment(d1);
+            d2 = new Department(2, 8, 15, "Energetics");
+            dao.addDepartment(d2);
+            d3 = new Department(3, 15, 15, "Computer Science and Informatics");
+            dao.addDepartment(d3);
+            d4 = new Department(4, 6, 15, "Telecommunication");
+            dao.addDepartment(d4);
+            d5 = new Department(5, 8, 15, "Software Engineering");
+            dao.addDepartment(d5);
         } catch (DepartmentException de) {
             de.printStackTrace();
         }
+
+        //here we test methods addDepartment & getDepartments
         ObservableList<Department> departments = dao.getDepartments();
         assertEquals(5, departments.size());
         assertEquals("Automatics and Electronics", departments.get(0).getName());
@@ -49,5 +57,22 @@ class CompanyDAOTest {
         assertEquals(15, departments.get(2).getCurrentNumberOfEmployees());
         assertEquals(4, departments.get(3).getId());
         assertEquals("Software Engineering", departments.get(4).getName());
+
+        //here we test method changeDepartment
+        d5.setName("Changed");
+        dao.changeDepartment(d5);
+        departments = dao.getDepartments();
+        assertEquals(5, departments.size());
+        assertEquals("Changed", departments.get(4).getName());
+        assertEquals("Computer Science and Informatics", departments.get(2).getName());
+
+        //here we test method removeDepartment
+        try {
+            dao.removeDepartment(d5);
+        } catch (DepartmentException e) {
+            e.printStackTrace();
+        }
+        departments = dao.getDepartments();
+        assertEquals(4, departments.size());
     }
 }
