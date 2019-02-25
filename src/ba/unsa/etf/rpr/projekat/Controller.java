@@ -3,7 +3,6 @@ package ba.unsa.etf.rpr.projekat;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -138,6 +137,18 @@ public class Controller {
     }
 
     public void clickOnHireButton(ActionEvent actionEvent) {
+        try {
+            Stage myStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/employee.fxml"));
+            loader.setController(new DepartmentController(company, null, this));
+            Parent root = loader.load();
+            myStage.setTitle("Hiring a new employee");
+            myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+            myStage.show();
+            myStage.setResizable(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void clickOnPromoteButton(ActionEvent actionEvent) {
