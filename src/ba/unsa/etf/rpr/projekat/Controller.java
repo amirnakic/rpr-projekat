@@ -222,13 +222,60 @@ public class Controller {
     }
 
     public void clickOnVacationButton(ActionEvent actionEvent) {
-        
+        if (getCurrentEmployee() == null) {
+            if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
+            setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
+        }
+        try {
+            Stage myStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/absence.fxml"));
+            loader.setController(new AbsenceController(company, getCurrentEmployee(), this, 1));
+            Parent root = loader.load();
+            myStage.setTitle("Vacation");
+            myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+            myStage.show();
+            myStage.setResizable(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void clickOnSickLeaveButton(ActionEvent actionEvent) {
+        if (getCurrentEmployee() == null) {
+            if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
+            setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
+        }
+        try {
+            Stage myStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/absence.fxml"));
+            loader.setController(new AbsenceController(company, getCurrentEmployee(), this, 2));
+            Parent root = loader.load();
+            myStage.setTitle("Sick Leave");
+            myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+            myStage.show();
+            myStage.setResizable(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void clickOnUnpaidLeaveButton(ActionEvent actionEvent) {
+        if (getCurrentEmployee() == null) {
+            if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
+            setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
+        }
+        try {
+            Stage myStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/absence.fxml"));
+            loader.setController(new AbsenceController(company, getCurrentEmployee(), this, 3));
+            Parent root = loader.load();
+            myStage.setTitle("Unpaid Leave");
+            myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+            myStage.show();
+            myStage.setResizable(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void clickOnInfoButton(ActionEvent actionEvent) {
