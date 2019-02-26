@@ -814,7 +814,7 @@ public class CompanyDAO {
         try {
             int id = availableIDForSalaries(getSalaries());
             start("INSERT OR REPLACE INTO salary(id, base, coefficient, taxes, contributions, meal_allowances, date, employee) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
-            statement.setInt(1, s.getId());
+            statement.setInt(1, id);
             statement.setInt(2, s.getBase());
             statement.setInt(3, s.getCoefficient());
             statement.setInt(4, s.getTaxes());
