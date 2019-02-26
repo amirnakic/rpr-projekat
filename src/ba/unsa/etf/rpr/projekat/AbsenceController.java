@@ -154,6 +154,7 @@ public class AbsenceController {
                 UnpaidLeave ul = new UnpaidLeave(company.availableIDForUnpaidLeaves(company.getUnpaidLeaves()), startOfAbsence.getValue(), endOfAbsence.getValue(), employee);
                 try {
                     company.sendEmployeeOnUnpaidLeave(ul);
+                    company.removeSalaryBecauseOfUnpaidLeave(ul.getEmployee());
                     controller.employeeTable.setItems(company.getEmployees());
                 } catch (UnpaidLeaveException ule) {
                     Alert alert1 = new Alert(Alert.AlertType.ERROR);

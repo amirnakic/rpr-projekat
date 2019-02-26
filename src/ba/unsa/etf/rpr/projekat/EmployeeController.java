@@ -240,6 +240,8 @@ public class EmployeeController {
                     company.addSalary(s);
                     controller.employeeTable.setItems(company.getEmployees());
                     controller.departmentTable.setItems(company.getDepartments());
+                    controller.employeeCombo.setItems(company.getEmployees());
+                    controller.departmentCombo.setItems(company.getDepartments());
                 } catch (EmployeeException e1) {
                     Alert alert1 = new Alert(Alert.AlertType.ERROR);
                     alert1.setTitle("Error");
@@ -257,6 +259,8 @@ public class EmployeeController {
                 company.updateSalary(s);
                 controller.employeeTable.setItems(company.getEmployees());
                 controller.departmentTable.setItems(company.getDepartments());
+                controller.employeeCombo.setItems(company.getEmployees());
+                controller.departmentCombo.setItems(company.getDepartments());
             }
             clickOnCancelButton(actionEvent);
         }

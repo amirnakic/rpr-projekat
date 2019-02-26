@@ -68,6 +68,7 @@ public class DepartmentController {
                 try {
                     company.addDepartment(d);
                     controller.departmentTable.setItems(company.getDepartments());
+                    controller.departmentCombo.setItems(company.getDepartments());
                 } catch (DepartmentException e) {
                     Alert alert1 = new Alert(Alert.AlertType.ERROR);
                     alert1.setTitle("Error");
@@ -78,6 +79,7 @@ public class DepartmentController {
                 d = new Department(department.getId(), department.getCurrentNumberOfEmployees(), Integer.parseInt(maximumNumberOfEmployees.getText()), departmentName.getText());
                 company.changeDepartment(d);
                 controller.departmentTable.setItems(company.getDepartments());
+                controller.departmentCombo.setItems(company.getDepartments());
             }
             clickOnCancelButton(actionEvent);
         }

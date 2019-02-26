@@ -826,6 +826,19 @@ public class CompanyDAO {
         changeEmployee(employee);
     }
 
+    public void removeSalaryBecauseOfUnpaidLeave(Employee employee) {
+        int id = getIDOfLastSalaryForEmployee(employee);
+        try {
+            start("DELETE FROM salary WHERE id = ?");
+            statement.setInt(1, id);
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+        }
+        close();
+    }
+
     public void addSalary(Salary s) {
         try {
             int id = availableIDForSalaries(getSalaries());
