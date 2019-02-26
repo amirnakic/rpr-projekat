@@ -94,8 +94,10 @@ public class Controller {
 
     public void updateSalaries(ObservableList<Salary> salaries) {
         for (Salary s : salaries) {
-            Salary salary = new Salary(s.getId(), s.getBase(), s.getCoefficient(), s.getTaxes(), s.getContributions(), s.getMealAllowances(), LocalDate.now(), s.getEmployee());
-            company.addSalary(salary);
+            if (!s.getEmployee().isUnpaidLeave()) {
+                Salary salary = new Salary(s.getId(), s.getBase(), s.getCoefficient(), s.getTaxes(), s.getContributions(), s.getMealAllowances(), LocalDate.now(), s.getEmployee());
+                company.addSalary(salary);
+            }
         }
     }
 
