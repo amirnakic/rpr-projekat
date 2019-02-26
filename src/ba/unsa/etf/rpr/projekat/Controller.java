@@ -140,7 +140,7 @@ public class Controller {
         try {
             Stage myStage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/employee.fxml"));
-            loader.setController(new DepartmentController(company, null, this));
+            loader.setController(new EmployeeController(company, null, this));
             Parent root = loader.load();
             myStage.setTitle("Hiring a new employee");
             myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
@@ -152,9 +152,44 @@ public class Controller {
     }
 
     public void clickOnPromoteButton(ActionEvent actionEvent) {
+        if (getCurrentEmployee() == null) {
+            if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
+            setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
+        }
+        try {
+            Stage myStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/employee.fxml"));
+            loader.setController(new EmployeeController(company, getCurrentEmployee(), this));
+            Parent root = loader.load();
+            myStage.setTitle("Promoting an employee");
+            myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+            myStage.show();
+            myStage.setResizable(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void clickOnFireButton(ActionEvent actionEvent) {
+        if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
+        setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Firing an employee");
+        alert.setHeaderText("Are you sure that you want to fire this employee ?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get() == ButtonType.OK) {
+            try {
+                company.removeEmployee(getCurrentEmployee());
+                setCurrentEmployee(null);
+                employeeTable.setItems(company.getEmployees());
+                departmentTable.setItems(company.getDepartments());
+            } catch (EmployeeException ee) {
+                Alert alert1 = new Alert(Alert.AlertType.ERROR);
+                alert1.setTitle("Error");
+                alert1.setContentText(ee.getMessage());
+                alert1.showAndWait();
+            }
+        }
     }
 
     public void clickOnRetireButton(ActionEvent actionEvent) {

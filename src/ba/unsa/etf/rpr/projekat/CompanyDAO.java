@@ -401,6 +401,8 @@ public class CompanyDAO {
     public void removeEmployee(Employee employee) throws EmployeeException {
         if (!findEmployee(employee))
             throw new EmployeeException("Employee " + employee.toString() + " isn't registered yet.");
+        employee.getDepartment().setCurrentNumberOfEmployees(employee.getDepartment().getCurrentNumberOfEmployees() - 1);
+        changeDepartment(employee.getDepartment());
         try {
             start("DELETE FROM employee WHERE id = ?");
             statement.setInt(1, employee.getId());
