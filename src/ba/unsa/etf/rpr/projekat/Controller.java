@@ -321,7 +321,7 @@ public class Controller {
         try {
             Stage myStage = new Stage();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/info.fxml"));
-            loader.setController(new InfoController(getCurrentEmployee()));
+            loader.setController(new InfoController(company, getCurrentEmployee()));
             Parent root = loader.load();
             myStage.setTitle("Info");
             myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
