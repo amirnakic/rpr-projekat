@@ -226,17 +226,23 @@ public class Controller {
             if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
             setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
         }
-        try {
-            Stage myStage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/absence.fxml"));
-            loader.setController(new AbsenceController(company, getCurrentEmployee(), this, 1));
-            Parent root = loader.load();
-            myStage.setTitle("Vacation");
-            myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
-            myStage.show();
-            myStage.setResizable(false);
-        } catch (IOException e) {
-            e.printStackTrace();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Sending an employee to vacation");
+        alert.setHeaderText("Are you sure that you want to send this employee to vacation ?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get() == ButtonType.OK) {
+            try {
+                Stage myStage = new Stage();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/absence.fxml"));
+                loader.setController(new AbsenceController(company, getCurrentEmployee(), this, 1));
+                Parent root = loader.load();
+                myStage.setTitle("Vacation");
+                myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+                myStage.show();
+                myStage.setResizable(false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -245,17 +251,23 @@ public class Controller {
             if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
             setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
         }
-        try {
-            Stage myStage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/absence.fxml"));
-            loader.setController(new AbsenceController(company, getCurrentEmployee(), this, 2));
-            Parent root = loader.load();
-            myStage.setTitle("Sick Leave");
-            myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
-            myStage.show();
-            myStage.setResizable(false);
-        } catch (IOException e) {
-            e.printStackTrace();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Sending an employee to sick leave");
+        alert.setHeaderText("Are you sure that you want to send this employee to sick leave ?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get() == ButtonType.OK) {
+            try {
+                Stage myStage = new Stage();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/absence.fxml"));
+                loader.setController(new AbsenceController(company, getCurrentEmployee(), this, 2));
+                Parent root = loader.load();
+                myStage.setTitle("Sick Leave");
+                myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+                myStage.show();
+                myStage.setResizable(false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -264,20 +276,86 @@ public class Controller {
             if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
             setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
         }
-        try {
-            Stage myStage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/absence.fxml"));
-            loader.setController(new AbsenceController(company, getCurrentEmployee(), this, 3));
-            Parent root = loader.load();
-            myStage.setTitle("Unpaid Leave");
-            myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
-            myStage.show();
-            myStage.setResizable(false);
-        } catch (IOException e) {
-            e.printStackTrace();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Sending an employee to unpaid leave");
+        alert.setHeaderText("Are you sure that you want to send this employee to unpaid leave ?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get() == ButtonType.OK) {
+            try {
+                Stage myStage = new Stage();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/absence.fxml"));
+                loader.setController(new AbsenceController(company, getCurrentEmployee(), this, 3));
+                Parent root = loader.load();
+                myStage.setTitle("Unpaid Leave");
+                myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+                myStage.show();
+                myStage.setResizable(false);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void clickOnInfoButton(ActionEvent actionEvent) {
+    }
+
+    public void clickOnGetBackFromVacationButton(ActionEvent actionEvent) {
+        if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
+        setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Getting an employee back from vacation");
+        alert.setHeaderText("Are you sure that you want to get this employee back from vacation ?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get() == ButtonType.OK) {
+            try {
+                company.getEmployeeBackFromVacation(getCurrentEmployee());
+                employeeTable.setItems(company.getEmployees());
+            } catch (VacationException ee) {
+                Alert alert1 = new Alert(Alert.AlertType.ERROR);
+                alert1.setTitle("Error");
+                alert1.setContentText(ee.getMessage());
+                alert1.showAndWait();
+            }
+        }
+    }
+
+    public void clickOnGetBackFromSickLeaveButton(ActionEvent actionEvent) {
+        if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
+        setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Getting an employee back from sick leave");
+        alert.setHeaderText("Are you sure that you want to get this employee back from sick leave ?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get() == ButtonType.OK) {
+            try {
+                company.getEmployeeBackFromSickLeave(getCurrentEmployee());
+                employeeTable.setItems(company.getEmployees());
+            } catch (SickLeaveException ee) {
+                Alert alert1 = new Alert(Alert.AlertType.ERROR);
+                alert1.setTitle("Error");
+                alert1.setContentText(ee.getMessage());
+                alert1.showAndWait();
+            }
+        }
+    }
+
+    public void clcikOnGetBackFromUnpaidLeaveButton(ActionEvent actionEvent) {
+        if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
+        setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Getting an employee back from unpaid leave");
+        alert.setHeaderText("Are you sure that you want to get this employee back from unpaid leave ?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get() == ButtonType.OK) {
+            try {
+                company.getEmployeeBackFromUnpaidLeave(getCurrentEmployee());
+                employeeTable.setItems(company.getEmployees());
+            } catch (UnpaidLeaveException ee) {
+                Alert alert1 = new Alert(Alert.AlertType.ERROR);
+                alert1.setTitle("Error");
+                alert1.setContentText(ee.getMessage());
+                alert1.showAndWait();
+            }
+        }
     }
 }

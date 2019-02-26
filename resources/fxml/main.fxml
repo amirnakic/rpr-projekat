@@ -82,35 +82,41 @@
                                 <GridPane layoutX="1.0" prefHeight="424.0" prefWidth="829.0">
                                     <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="731.0" minWidth="10.0"
-                                                           prefWidth="692.0"/>
+                                                           prefWidth="663.0"/>
                                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="407.0" minWidth="10.0"
-                                                           prefWidth="137.0"/>
+                                                           prefWidth="166.0"/>
                                     </columnConstraints>
                                     <rowConstraints>
-                                        <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="72.0"
+                                        <RowConstraints maxHeight="72.0" minHeight="10.0" prefHeight="56.0"
                                                         vgrow="SOMETIMES"/>
-                                        <RowConstraints maxHeight="38.0" minHeight="10.0" prefHeight="31.0"
+                                        <RowConstraints maxHeight="50.0" minHeight="10.0" prefHeight="30.0"
                                                         vgrow="SOMETIMES"/>
-                                        <RowConstraints maxHeight="45.0" minHeight="10.0" prefHeight="29.0"
+                                        <RowConstraints maxHeight="45.0" minHeight="0.0" prefHeight="28.0"
                                                         vgrow="SOMETIMES"/>
-                                        <RowConstraints maxHeight="61.0" minHeight="10.0" prefHeight="31.0"
+                                        <RowConstraints maxHeight="62.0" minHeight="10.0" prefHeight="32.0"
                                                         vgrow="SOMETIMES"/>
-                                        <RowConstraints maxHeight="74.0" minHeight="10.0" prefHeight="33.0"
+                                        <RowConstraints maxHeight="74.0" minHeight="10.0" prefHeight="31.0"
                                                         vgrow="SOMETIMES"/>
                                         <RowConstraints maxHeight="84.0" minHeight="10.0" prefHeight="31.0"
                                                         vgrow="SOMETIMES"/>
-                                        <RowConstraints maxHeight="95.0" minHeight="10.0" prefHeight="34.0"
+                                        <RowConstraints maxHeight="95.0" minHeight="10.0" prefHeight="29.0"
                                                         vgrow="SOMETIMES"/>
                                         <RowConstraints maxHeight="104.0" minHeight="10.0" prefHeight="31.0"
                                                         vgrow="SOMETIMES"/>
                                         <RowConstraints maxHeight="110.0" minHeight="10.0" prefHeight="32.0"
                                                         vgrow="SOMETIMES"/>
-                                        <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="96.0"
+                                        <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="28.0"
+                                                        vgrow="SOMETIMES"/>
+                                        <RowConstraints maxHeight="115.0" minHeight="7.0" prefHeight="30.0"
+                                                        vgrow="SOMETIMES"/>
+                                        <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="30.0"
+                                                        vgrow="SOMETIMES"/>
+                                        <RowConstraints maxHeight="115.0" minHeight="10.0" prefHeight="36.0"
                                                         vgrow="SOMETIMES"/>
                                     </rowConstraints>
                                     <children>
                                         <TableView fx:id="employeeTable" prefHeight="200.0" prefWidth="200.0"
-                                                   GridPane.rowSpan="10">
+                                                   GridPane.rowSpan="13">
                                             <columns>
                                                 <TableColumn fx:id="employeeID" prefWidth="75.0" text="ID"/>
                                                 <TableColumn fx:id="employeeName" prefWidth="75.0" text="Name"/>
@@ -125,52 +131,49 @@
                                             </columnResizePolicy>
                                         </TableView>
                                         <Button fx:id="hireBtn" mnemonicParsing="false" onAction="#clickOnHireButton"
-                                                prefHeight="25.0" prefWidth="135.0" text="Hire an employee"
+                                                prefHeight="25.0" prefWidth="164.0" text="Hire an employee"
                                                 GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                                         <Button fx:id="promoteBtn" mnemonicParsing="false"
-                                                onAction="#clickOnPromoteButton" prefHeight="25.0" prefWidth="135.0"
+                                                onAction="#clickOnPromoteButton" prefHeight="25.0" prefWidth="164.0"
                                                 text="Promote an employee" GridPane.columnIndex="1"
                                                 GridPane.rowIndex="2"/>
                                         <Button fx:id="fireBtn" mnemonicParsing="false" onAction="#clickOnFireButton"
-                                                prefHeight="25.0" prefWidth="135.0" text="Fire an employee"
+                                                prefHeight="25.0" prefWidth="164.0" text="Fire an employee"
                                                 GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                                         <Button fx:id="retireBtn" mnemonicParsing="false"
-                                                onAction="#clickOnRetireButton" prefHeight="25.0" prefWidth="135.0"
+                                                onAction="#clickOnRetireButton" prefHeight="25.0" prefWidth="164.0"
                                                 text="Retire an employee" GridPane.columnIndex="1"
                                                 GridPane.rowIndex="4"/>
                                         <Button fx:id="vacationBtn" mnemonicParsing="false"
-                                                onAction="#clickOnVacationButton" prefHeight="25.0" prefWidth="135.0"
+                                                onAction="#clickOnVacationButton" prefHeight="25.0" prefWidth="164.0"
                                                 text="Send to vacation" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
                                         <Button fx:id="sickLeaveBtn" mnemonicParsing="false"
-                                                onAction="#clickOnSickLeaveButton" prefHeight="25.0" prefWidth="135.0"
+                                                onAction="#clickOnSickLeaveButton" prefHeight="25.0" prefWidth="164.0"
                                                 text="Send to sick leave" GridPane.columnIndex="1"
                                                 GridPane.rowIndex="6"/>
                                         <Button fx:id="unpaidLeaveBtn" mnemonicParsing="false"
-                                                onAction="#clickOnUnpaidLeaveButton" prefHeight="25.0" prefWidth="135.0"
+                                                onAction="#clickOnUnpaidLeaveButton" prefHeight="25.0" prefWidth="164.0"
                                                 text="Send to unpaid leave" GridPane.columnIndex="1"
                                                 GridPane.rowIndex="7"/>
+                                        <Button fx:id="getbackVacBtn" mnemonicParsing="false"
+                                                onAction="#clickOnGetBackFromVacationButton" prefHeight="25.0"
+                                                prefWidth="164.0" text="Get back from vacation" GridPane.columnIndex="1"
+                                                GridPane.rowIndex="8"/>
+                                        <Button fx:id="getBackSLBtn" mnemonicParsing="false"
+                                                onAction="#clickOnGetBackFromSickLeaveButton" prefHeight="25.0"
+                                                prefWidth="164.0" text="Get back from sick leave"
+                                                GridPane.columnIndex="1" GridPane.rowIndex="9"/>
+                                        <Button fx:id="getBackFromULBtn" mnemonicParsing="false"
+                                                onAction="#clcikOnGetBackFromUnpaidLeaveButton" prefHeight="25.0"
+                                                prefWidth="164.0" text="Get back from unpaid leave"
+                                                GridPane.columnIndex="1" GridPane.rowIndex="10"/>
                                         <Button fx:id="infoBtn" mnemonicParsing="false" onAction="#clickOnInfoButton"
-                                                prefHeight="25.0" prefWidth="135.0" text="More info about..."
-                                                GridPane.columnIndex="1" GridPane.rowIndex="8"/>
+                                                prefHeight="25.0" prefWidth="164.0" text="More info about"
+                                                GridPane.columnIndex="1" GridPane.rowIndex="11"/>
                                     </children>
                                 </GridPane>
                             </children>
                         </AnchorPane>
-                    </content>
-                </Tab>
-                <Tab fx:id="vacationTab" text="Vacation">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                    </content>
-                </Tab>
-                <Tab fx:id="sickLeaveTab" text="Sick Leave">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
-                    </content>
-                </Tab>
-                <Tab fx:id="unpaidLeaveTab" text="Unpaid Leave">
-                    <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
                     </content>
                 </Tab>
                 <Tab fx:id="salaryTab" text="Salary">

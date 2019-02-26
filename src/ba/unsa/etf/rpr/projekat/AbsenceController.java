@@ -101,6 +101,7 @@ public class AbsenceController {
                 return false;
         }
         if (LocalDate.now().compareTo(startOfAbsence.getValue()) < 0) return false;
+        if (endOfAbsence.getValue().compareTo(startOfAbsence.getValue()) < 0) return false;
         return true;
     }
 

@@ -642,23 +642,12 @@ public class CompanyDAO {
         close();
     }
 
-    public void getEmployeeBackFromVacation(Vacation vacation) throws VacationException {
-        if (!findEmployee(vacation.getEmployee())) return;
-        if (!vacation.getEmployee().isVacation())
-            throw new VacationException("Employee " + vacation.getEmployee().toString() + " isn't currently on vacation.");
-        vacation.getEmployee().setVacation(FALSE);
-        changeEmployee(vacation.getEmployee());
-        try {
-            start("UPDATE vacation SET end_of_vacation = ? WHERE id = ?");
-            statement.setDate(1, Date.valueOf(vacation.getEndOfVacation()));
-            statement.setInt(2, vacation.getId());
-            statement.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-            close();
-            return;
-        }
-        close();
+    public void getEmployeeBackFromVacation(Employee employee) throws VacationException {
+        if (!findEmployee(employee)) return;
+        if (!employee.isVacation())
+            throw new VacationException("Employee " + employee.toString() + " isn't currently on vacation.");
+        employee.setVacation(FALSE);
+        changeEmployee(employee);
     }
 
     public ObservableList<Employee> getEmployeesOnSickLeave() {
@@ -733,23 +722,12 @@ public class CompanyDAO {
         close();
     }
 
-    public void getEmployeeBackFromSickLeave(SickLeave sickLeave) throws SickLeaveException {
-        if (!findEmployee(sickLeave.getEmployee())) return;
-        if (!sickLeave.getEmployee().isSickLeave())
-            throw new SickLeaveException("Employee " + sickLeave.getEmployee().toString() + " isn't currently on sick leave.");
-        sickLeave.getEmployee().setSickLeave(FALSE);
-        changeEmployee(sickLeave.getEmployee());
-        try {
-            start("UPDATE sick_leave SET end_of_absence = ? WHERE id = ?");
-            statement.setDate(1, Date.valueOf(sickLeave.getEndOfAbsence()));
-            statement.setInt(2, sickLeave.getId());
-            statement.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-            close();
-            return;
-        }
-        close();
+    public void getEmployeeBackFromSickLeave(Employee employee) throws SickLeaveException {
+        if (!findEmployee(employee)) return;
+        if (!employee.isSickLeave())
+            throw new SickLeaveException("Employee " + employee.toString() + " isn't currently on sick leave.");
+        employee.setSickLeave(FALSE);
+        changeEmployee(employee);
     }
 
     public ObservableList<Employee> getEmployeesOnUnpaidLeave() {
@@ -824,23 +802,12 @@ public class CompanyDAO {
         close();
     }
 
-    public void getEmployeeBackFromUnpaidLeave(UnpaidLeave unpaidLeave) throws UnpaidLeaveException {
-        if (!findEmployee(unpaidLeave.getEmployee())) return;
-        if (!unpaidLeave.getEmployee().isUnpaidLeave())
-            throw new UnpaidLeaveException("Employee " + unpaidLeave.getEmployee().toString() + " isn't currently on unpaid leave.");
-        unpaidLeave.getEmployee().setUnpaidLeave(FALSE);
-        changeEmployee(unpaidLeave.getEmployee());
-        try {
-            start("UPDATE unpaid_leave SET end_of_absence = ? WHERE id = ?");
-            statement.setDate(1, Date.valueOf(unpaidLeave.getEndOfAbsence()));
-            statement.setInt(2, unpaidLeave.getId());
-            statement.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-            close();
-            return;
-        }
-        close();
+    public void getEmployeeBackFromUnpaidLeave(Employee employee) throws UnpaidLeaveException {
+        if (!findEmployee(employee)) return;
+        if (!employee.isUnpaidLeave())
+            throw new UnpaidLeaveException("Employee " + employee.toString() + " isn't currently on unpaid leave.");
+        employee.setUnpaidLeave(FALSE);
+        changeEmployee(employee);
     }
 
     public void addSalary(Salary s) {

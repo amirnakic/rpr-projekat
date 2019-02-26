@@ -159,7 +159,7 @@ class CompanyDAOTest {
         ObservableList<Employee> employees = dao.getEmployeesOnVacation();
         assertEquals(1, employees.size());
         try {
-            dao.getEmployeeBackFromVacation(v1);
+            dao.getEmployeeBackFromVacation(e1);
         } catch (VacationException e) {
             e.printStackTrace();
         }
@@ -191,7 +191,7 @@ class CompanyDAOTest {
         ObservableList<Employee> employees = dao.getEmployeesOnSickLeave();
         assertEquals(1, employees.size());
         try {
-            dao.getEmployeeBackFromSickLeave(sl);
+            dao.getEmployeeBackFromSickLeave(e1);
         } catch (SickLeaveException e) {
             e.printStackTrace();
         }
@@ -223,7 +223,7 @@ class CompanyDAOTest {
         ObservableList<Employee> employees = dao.getEmployeesOnUnpaidLeave();
         assertEquals(1, employees.size());
         try {
-            dao.getEmployeeBackFromUnpaidLeave(ul);
+            dao.getEmployeeBackFromUnpaidLeave(e1);
         } catch (UnpaidLeaveException e) {
             e.printStackTrace();
         }
