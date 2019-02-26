@@ -193,9 +193,36 @@ public class Controller {
     }
 
     public void clickOnRetireButton(ActionEvent actionEvent) {
+        if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
+        setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
+        if (getCurrentEmployee().getWorkExperience() < 40) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setContentText("This employee doesn't meet requirements to be retired.");
+            alert.showAndWait();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Retiring an employee");
+            alert.setHeaderText("Are you sure that you want to retire this employee ?");
+            Optional<ButtonType> option = alert.showAndWait();
+            if (option.get() == ButtonType.OK) {
+                try {
+                    company.removeEmployee(getCurrentEmployee());
+                    setCurrentEmployee(null);
+                    employeeTable.setItems(company.getEmployees());
+                    departmentTable.setItems(company.getDepartments());
+                } catch (EmployeeException ee) {
+                    Alert alert1 = new Alert(Alert.AlertType.ERROR);
+                    alert1.setTitle("Error");
+                    alert1.setContentText(ee.getMessage());
+                    alert1.showAndWait();
+                }
+            }
+        }
     }
 
     public void clickOnVacationButton(ActionEvent actionEvent) {
+        
     }
 
     public void clickOnSickLeaveButton(ActionEvent actionEvent) {
