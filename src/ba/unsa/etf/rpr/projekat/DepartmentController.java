@@ -64,7 +64,7 @@ public class DepartmentController {
         Department d = null;
         if (isNameCorrect && isNumberCorrect) {
             if (!edit) {
-                d = new Department(company.getDepartments().size() + 1, 0, Integer.parseInt(maximumNumberOfEmployees.getText()), departmentName.getText());
+                d = new Department(company.availableIDForDepartments(company.getDepartments()), 0, Integer.parseInt(maximumNumberOfEmployees.getText()), departmentName.getText());
                 try {
                     company.addDepartment(d);
                     controller.departmentTable.setItems(company.getDepartments());

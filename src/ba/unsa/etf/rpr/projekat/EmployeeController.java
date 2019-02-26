@@ -197,7 +197,7 @@ public class EmployeeController {
         Employee e = null;
         if (areNamesCorrect && isPhoneNumberCorrect && isEmailCorrect && areNumbersCorrect && isDateCorrect && areCombosCorrect) {
             if (!edit) {
-                e = new Employee(company.getEmployees().size() + 1, Integer.parseInt(workExperienceField.getText()), Integer.parseInt(vacationDaysField.getText()),
+                e = new Employee(company.availableIDForEmployees(company.getEmployees()), Integer.parseInt(workExperienceField.getText()), Integer.parseInt(vacationDaysField.getText()),
                         nameField.getText(), surnameField.getText(), phoneNumberField.getText(), emailAddressField.getText(), roleField.getText(),
                         qualificationsCombo.getValue(), dateField.getValue(), LocalDate.now(), FALSE, FALSE, FALSE, departmentCombo.getValue());
                 try {
@@ -211,16 +211,10 @@ public class EmployeeController {
                     alert1.showAndWait();
                 }
             } else {
-                employee.setName(nameField.getText());
-                employee.setSurname(surnameField.getText());
-                employee.setPhoneNumber(phoneNumberField.getText());
-                employee.setEmailAddress(emailAddressField.getText());
-                employee.setDateOfBirth(dateField.getValue());
-                employee.setWorkExperience(Integer.parseInt(workExperienceField.getText()));
-                employee.setVacationDaysPerYear(Integer.parseInt(vacationDaysField.getText()));
-                employee.setRole(roleField.getText());
-                employee.setQualifications(qualificationsCombo.getValue());
-                employee.setDepartment(departmentCombo.getValue());
+                e = new Employee(employee.getId(), Integer.parseInt(workExperienceField.getText()), Integer.parseInt(vacationDaysField.getText()),
+                        nameField.getText(), surnameField.getText(), phoneNumberField.getText(), emailAddressField.getText(), roleField.getText(),
+                        qualificationsCombo.getValue(), dateField.getValue(), employee.getDateOfEmployment(), employee.isVacation(), employee.isSickLeave(),
+                        employee.isUnpaidLeave(), departmentCombo.getValue());
                 company.changeEmployee(employee);
                 controller.employeeTable.setItems(company.getEmployees());
                 controller.departmentTable.setItems(company.getDepartments());
