@@ -20,9 +20,6 @@ import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 public class Controller {
     public Tab departmentTab;
     public Tab employeeTab;
-    public Tab vacationTab;
-    public Tab sickLeaveTab;
-    public Tab unpaidLeaveTab;
     public Tab salaryTab;
     public TableView<Department> departmentTable = new TableView<>();
     public TableColumn<Department, Integer> departmentID;
@@ -297,6 +294,22 @@ public class Controller {
     }
 
     public void clickOnInfoButton(ActionEvent actionEvent) {
+        if (getCurrentEmployee() == null) {
+            if (employeeTable.getSelectionModel().getSelectedItem() == null) return;
+            setCurrentEmployee(employeeTable.getSelectionModel().getSelectedItem());
+        }
+        try {
+            Stage myStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/info.fxml"));
+            loader.setController(new InfoController(getCurrentEmployee()));
+            Parent root = loader.load();
+            myStage.setTitle("Info");
+            myStage.setScene(new Scene(root, USE_COMPUTED_SIZE, USE_COMPUTED_SIZE));
+            myStage.show();
+            myStage.setResizable(false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void clickOnGetBackFromVacationButton(ActionEvent actionEvent) {
