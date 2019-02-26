@@ -1,5 +1,6 @@
 package ba.unsa.etf.rpr.projekat;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -16,6 +17,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static java.lang.Boolean.FALSE;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 public class EmployeeController {
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -70,6 +72,7 @@ public class EmployeeController {
                 }
             }
         });
+        updateWorkExperience(company.getEmployees());
         qualificationsCombo.getItems().addAll("Elementary School", "High School", "Bachelor degree", "Masters degree", "Doctorate", "Docent");
         departmentCombo.getItems().addAll(company.getDepartments());
         if (edit) {
@@ -83,6 +86,13 @@ public class EmployeeController {
             vacationDaysField.setText(String.valueOf(employee.getVacationDaysPerYear()));
             qualificationsCombo.setValue(employee.getQualifications());
             departmentCombo.setValue(employee.getDepartment());
+        }
+    }
+
+    public void updateWorkExperience(ObservableList<Employee> employees) {
+        for (Employee e : employees) {
+            if (DAYS.between(e.getDateOfEmployment(), LocalDate.now()) == 365)
+                e.setWorkExperience(e.getWorkExperience() + 1);
         }
     }
 
