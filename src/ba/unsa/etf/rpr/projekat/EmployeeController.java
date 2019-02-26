@@ -91,7 +91,7 @@ public class EmployeeController {
 
     public void updateWorkExperience(ObservableList<Employee> employees) {
         for (Employee e : employees) {
-            if (DAYS.between(e.getDateOfEmployment(), LocalDate.now()) == 365)
+            if (DAYS.between(e.getDateOfEmployment(), LocalDate.now()) >= 365 * (1 + e.getWorkExperience()))
                 e.setWorkExperience(e.getWorkExperience() + 1);
         }
     }
