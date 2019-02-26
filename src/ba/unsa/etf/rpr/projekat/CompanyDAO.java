@@ -830,6 +830,24 @@ public class CompanyDAO {
         close();
     }
 
+    public void updateSalary(Salary s) {
+        int id = getIDOfLastSalaryForEmployee(s.getEmployee());
+        try {
+            start("UPDATE salary SET base = ?, coefficient = ?, taxes = ?, contributions = ?, meal_allowances = ? WHERE id = ?");
+            statement.setInt(1, s.getBase());
+            statement.setInt(2, s.getCoefficient());
+            statement.setInt(3, s.getTaxes());
+            statement.setInt(4, s.getContributions());
+            statement.setInt(5, s.getMealAllowances());
+            statement.setInt(6, id);
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            close();
+        }
+        close();
+    }
+
     public ObservableList<Salary> getAllSalariesForEmployee(Employee employee) {
         ObservableList<Salary> result = FXCollections.observableArrayList();
         if (!findEmployee(employee)) return result;
@@ -921,5 +939,18 @@ public class CompanyDAO {
                 result.add(s);
         }
         return result;
+    }
+
+    public int getIDOfLastSalaryForEmployee(Employee employee) {
+        ObservableList<Salary> salaries = getSalaries();
+        int numberOfSalaries = getAllSalariesForEmployee(employee).size();
+        for (Salary s : salaries) {
+            if (s.getEmployee().getId() == employee.getId()) {
+                numberOfSalaries--;
+                if (numberOfSalaries == 0)
+                    return s.getId();
+            }
+        }
+        return 1;
     }
 }

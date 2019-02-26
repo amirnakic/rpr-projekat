@@ -3,6 +3,7 @@ package ba.unsa.etf.rpr.projekat;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,10 +12,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import org.assertj.core.internal.bytebuddy.asm.Advice;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Optional;
 
+import static java.time.temporal.ChronoUnit.DAYS;
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 
 public class Controller {
@@ -76,6 +80,23 @@ public class Controller {
         employeeAvailability.setCellValueFactory(cellData -> Bindings.concat(cellData.getValue().availability()));
         departmentTable.setItems(company.getDepartments());
         employeeTable.setItems(company.getEmployees());
+        updateWorkExperience(company.getEmployees());
+        if (LocalDate.now().getMonthValue() == 1 && LocalDate.now().getDayOfMonth() == 1)
+            updateSalaries(company.getSalaries());
+    }
+
+    public void updateWorkExperience(ObservableList<Employee> employees) {
+        for (Employee e : employees) {
+            if (DAYS.between(e.getDateOfEmployment(), LocalDate.now()) >= 365 * (1 + e.getWorkExperience()))
+                e.setWorkExperience(e.getWorkExperience() + 1);
+        }
+    }
+
+    public void updateSalaries(ObservableList<Salary> salaries) {
+        for (Salary s : salaries) {
+            Salary salary = new Salary(s.getId(), s.getBase(), s.getCoefficient(), s.getTaxes(), s.getContributions(), s.getMealAllowances(), LocalDate.now(), s.getEmployee());
+            company.addSalary(salary);
+        }
     }
 
     public void clickOnAddDepartmentButton(ActionEvent actionEvent) {

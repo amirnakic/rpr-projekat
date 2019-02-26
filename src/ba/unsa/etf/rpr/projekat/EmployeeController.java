@@ -1,6 +1,5 @@
 package ba.unsa.etf.rpr.projekat;
 
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -17,7 +16,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import static java.lang.Boolean.FALSE;
-import static java.time.temporal.ChronoUnit.DAYS;
 
 public class EmployeeController {
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -31,6 +29,11 @@ public class EmployeeController {
     public ComboBox<String> qualificationsCombo = new ComboBox<>();
     public ComboBox<Department> departmentCombo = new ComboBox<>();
     public DatePicker dateField;
+    public TextField baseField;
+    public TextField ceofficientField;
+    public TextField taxesField;
+    public TextField contributionsField;
+    public TextField mealAllowancesField;
     private CompanyDAO company;
     private Employee employee;
     private Controller controller;
@@ -72,7 +75,6 @@ public class EmployeeController {
                 }
             }
         });
-        updateWorkExperience(company.getEmployees());
         qualificationsCombo.getItems().addAll("Elementary School", "High School", "Bachelor degree", "Masters degree", "Doctorate", "Docent");
         departmentCombo.getItems().addAll(company.getDepartments());
         if (edit) {
@@ -86,13 +88,12 @@ public class EmployeeController {
             vacationDaysField.setText(String.valueOf(employee.getVacationDaysPerYear()));
             qualificationsCombo.setValue(employee.getQualifications());
             departmentCombo.setValue(employee.getDepartment());
-        }
-    }
-
-    public void updateWorkExperience(ObservableList<Employee> employees) {
-        for (Employee e : employees) {
-            if (DAYS.between(e.getDateOfEmployment(), LocalDate.now()) >= 365 * (1 + e.getWorkExperience()))
-                e.setWorkExperience(e.getWorkExperience() + 1);
+            Salary s = company.getSpecificSalary(LocalDate.now().getMonthValue(), LocalDate.now().getYear(), employee);
+            baseField.setText(String.valueOf(s.getBase()));
+            ceofficientField.setText(String.valueOf(s.getCoefficient()));
+            taxesField.setText(String.valueOf(s.getTaxes()));
+            contributionsField.setText(String.valueOf(s.getContributions()));
+            mealAllowancesField.setText(String.valueOf(s.getMealAllowances()));
         }
     }
 
@@ -159,17 +160,38 @@ public class EmployeeController {
             roleField.getStyleClass().add("fieldIncorrect");
             areNamesCorrect = false;
         }
-        if (isNumberCorrect(workExperienceField.getText()) && isNumberCorrect(vacationDaysField.getText())) {
+        if (isNumberCorrect(workExperienceField.getText()) && isNumberCorrect(vacationDaysField.getText()) && isNumberCorrect(baseField.getText())
+                && isNumberCorrect(ceofficientField.getText()) && isNumberCorrect(taxesField.getText()) && isNumberCorrect(contributionsField.getText()) && isNumberCorrect(mealAllowancesField.getText())) {
             workExperienceField.getStyleClass().removeAll("fieldIncorrect");
             workExperienceField.getStyleClass().add("fieldCorrect");
             vacationDaysField.getStyleClass().removeAll("fieldIncorrect");
             vacationDaysField.getStyleClass().add("fieldCorrect");
+            baseField.getStyleClass().removeAll("fieldIncorrect");
+            baseField.getStyleClass().add("fieldCorrect");
+            ceofficientField.getStyleClass().removeAll("fieldIncorrect");
+            ceofficientField.getStyleClass().add("fieldCorrect");
+            taxesField.getStyleClass().removeAll("fieldIncorrect");
+            taxesField.getStyleClass().add("fieldCorrect");
+            contributionsField.getStyleClass().removeAll("fieldIncorrect");
+            contributionsField.getStyleClass().add("fieldCorrect");
+            mealAllowancesField.getStyleClass().removeAll("fieldIncorrect");
+            mealAllowancesField.getStyleClass().add("fieldCorrect");
             areNumbersCorrect = true;
         } else {
             workExperienceField.getStyleClass().removeAll("fieldCorrect");
             workExperienceField.getStyleClass().add("fieldIncorrect");
             vacationDaysField.getStyleClass().removeAll("fieldCorrect");
             vacationDaysField.getStyleClass().add("fieldIncorrect");
+            baseField.getStyleClass().removeAll("fieldCorrect");
+            baseField.getStyleClass().add("fieldIncorrect");
+            ceofficientField.getStyleClass().removeAll("fieldCorrect");
+            ceofficientField.getStyleClass().add("fieldIncorrect");
+            taxesField.getStyleClass().removeAll("fieldCorrect");
+            taxesField.getStyleClass().add("fieldIncorrect");
+            contributionsField.getStyleClass().removeAll("fieldCorrect");
+            contributionsField.getStyleClass().add("fieldIncorrect");
+            mealAllowancesField.getStyleClass().removeAll("fieldCorrect");
+            mealAllowancesField.getStyleClass().add("fieldIncorrect");
             areNumbersCorrect = false;
         }
         if (dateField.getValue() != null && dateValidation(dateField.getValue().toString())) {
@@ -205,13 +227,17 @@ public class EmployeeController {
             isEmailCorrect = false;
         }
         Employee e = null;
+        Salary s = null;
         if (areNamesCorrect && isPhoneNumberCorrect && isEmailCorrect && areNumbersCorrect && isDateCorrect && areCombosCorrect) {
             if (!edit) {
                 e = new Employee(company.availableIDForEmployees(company.getEmployees()), Integer.parseInt(workExperienceField.getText()), Integer.parseInt(vacationDaysField.getText()),
                         nameField.getText(), surnameField.getText(), phoneNumberField.getText(), emailAddressField.getText(), roleField.getText(),
                         qualificationsCombo.getValue(), dateField.getValue(), LocalDate.now(), FALSE, FALSE, FALSE, departmentCombo.getValue());
+                s = new Salary(company.availableIDForSalaries(company.getSalaries()), Integer.parseInt(baseField.getText()), Integer.parseInt(ceofficientField.getText()),
+                        Integer.parseInt(taxesField.getText()), Integer.parseInt(contributionsField.getText()), Integer.parseInt(mealAllowancesField.getText()), LocalDate.now(), e);
                 try {
                     company.addEmployee(e);
+                    company.addSalary(s);
                     controller.employeeTable.setItems(company.getEmployees());
                     controller.departmentTable.setItems(company.getDepartments());
                 } catch (EmployeeException e1) {
@@ -225,7 +251,10 @@ public class EmployeeController {
                         nameField.getText(), surnameField.getText(), phoneNumberField.getText(), emailAddressField.getText(), roleField.getText(),
                         qualificationsCombo.getValue(), dateField.getValue(), employee.getDateOfEmployment(), employee.isVacation(), employee.isSickLeave(),
                         employee.isUnpaidLeave(), departmentCombo.getValue());
+                s = new Salary(company.getIDOfLastSalaryForEmployee(employee), Integer.parseInt(baseField.getText()), Integer.parseInt(ceofficientField.getText()),
+                        Integer.parseInt(taxesField.getText()), Integer.parseInt(contributionsField.getText()), Integer.parseInt(mealAllowancesField.getText()), LocalDate.now(), e);
                 company.changeEmployee(employee);
+                company.updateSalary(s);
                 controller.employeeTable.setItems(company.getEmployees());
                 controller.departmentTable.setItems(company.getDepartments());
             }
