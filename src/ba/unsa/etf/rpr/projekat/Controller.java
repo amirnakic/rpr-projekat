@@ -12,7 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import org.assertj.core.internal.bytebuddy.asm.Advice;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -94,10 +93,8 @@ public class Controller {
 
     public void updateSalaries(ObservableList<Salary> salaries) {
         for (Salary s : salaries) {
-            if (!s.getEmployee().isUnpaidLeave()) {
-                Salary salary = new Salary(s.getId(), s.getBase(), s.getCoefficient(), s.getTaxes(), s.getContributions(), s.getMealAllowances(), LocalDate.now(), s.getEmployee());
-                company.addSalary(salary);
-            }
+            Salary salary = new Salary(s.getId(), s.getBase(), s.getCoefficient(), s.getTaxes(), s.getContributions(), s.getMealAllowances(), LocalDate.now(), s.getEmployee());
+            company.addSalary(salary);
         }
     }
 

@@ -467,12 +467,28 @@ public class CompanyDAO {
             start("DELETE FROM employee WHERE id = ?");
             statement.setInt(1, employee.getId());
             statement.executeUpdate();
+            close();
+            start("DELETE FROM vacation WHERE id = ?");
+            statement.setInt(1, employee.getId());
+            statement.executeUpdate();
+            close();
+            start("DELETE FROM sick_leave WHERE id = ?");
+            statement.setInt(1, employee.getId());
+            statement.executeUpdate();
+            close();
+            start("DELETE FROM unpaid_leave WHERE id = ?");
+            statement.setInt(1, employee.getId());
+            statement.executeUpdate();
+            close();
+            start("DELETE FROM salary WHERE id = ?");
+            statement.setInt(1, employee.getId());
+            statement.executeUpdate();
+            close();
         } catch (Exception e) {
             e.printStackTrace();
             close();
             return;
         }
-        close();
     }
 
     public ObservableList<Employee> getEmployeesFromDepartment(Department department) throws DepartmentException {
