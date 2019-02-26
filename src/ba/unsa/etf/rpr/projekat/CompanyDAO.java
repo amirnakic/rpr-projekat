@@ -248,11 +248,21 @@ public class CompanyDAO {
         return false;
     }
 
+    public int availableIDForDepartments(ObservableList<Department> departments) {
+        int result = 1;
+        for (Department d : departments) {
+            if (d.getId() == result) {
+                result++;
+            } else break;
+        }
+        return result;
+    }
+
     public void addDepartment(Department department) throws DepartmentException {
         if (findDepartment(department))
             throw new DepartmentException("Department " + department.getName() + " already exists.");
         try {
-            int id = getDepartments().size() + 1;
+            int id = availableIDForDepartments(getDepartments());
             start("INSERT OR REPLACE INTO department(id, name, current_number_of_employees, maximum_number_of_employees) VALUES(?, ?, ?, ?)");
             statement.setInt(1, id);
             statement.setString(2, department.getName());
@@ -324,13 +334,63 @@ public class CompanyDAO {
         return true;
     }
 
+    public int availableIDForEmployees(ObservableList<Employee> employees) {
+        int result = 1;
+        for (Employee e : employees) {
+            if (e.getId() == result) {
+                result++;
+            } else break;
+        }
+        return result;
+    }
+
+    public int availableIDForVacations(ObservableList<Vacation> vacations) {
+        int result = 1;
+        for (Vacation v : vacations) {
+            if (v.getId() == result) {
+                result++;
+            } else break;
+        }
+        return result;
+    }
+
+    public int availableIDForSickLeaves(ObservableList<SickLeave> sickLeaves) {
+        int result = 1;
+        for (SickLeave sl : sickLeaves) {
+            if (sl.getId() == result) {
+                result++;
+            } else break;
+        }
+        return result;
+    }
+
+    public int availableIDForUnpaidLeaves(ObservableList<UnpaidLeave> unpaidLeaves) {
+        int result = 1;
+        for (UnpaidLeave ul : unpaidLeaves) {
+            if (ul.getId() == result) {
+                result++;
+            } else break;
+        }
+        return result;
+    }
+
+    public int availableIDForSalaries(ObservableList<Salary> salaries) {
+        int result = 1;
+        for (Salary s : salaries) {
+            if (s.getId() == result) {
+                result++;
+            } else break;
+        }
+        return result;
+    }
+
     public void addEmployee(Employee employee) throws EmployeeException {
         if (!isDepartmentAvailableForNewEmployees(employee.getDepartment()))
             throw new EmployeeException("Employee " + employee.toString() + " can't be registered because department " + employee.getName() + " is already full.");
         employee.getDepartment().setCurrentNumberOfEmployees(employee.getDepartment().getCurrentNumberOfEmployees() + 1);
         changeDepartment(employee.getDepartment());
         try {
-            int id = getEmployees().size() + 1;
+            int id = availableIDForEmployees(getEmployees());
             start("INSERT OR REPLACE INTO employee(id, name, surname, phone_number, email_address, role, qualifications, work_experience, vacation_days_per_year, " +
                     "date_of_birth, date_of_employment, vacation, sick_leave, unpaid_leave, department) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             statement.setInt(1, id);
@@ -567,7 +627,7 @@ public class CompanyDAO {
         vacation.getEmployee().setVacation(TRUE);
         changeEmployee(vacation.getEmployee());
         try {
-            int id = getVacations().size() + 1;
+            int id = availableIDForVacations(getVacations());
             start("INSERT OR REPLACE INTO vacation(id, start_of_vacation, end_of_vacation, employee) VALUES(?, ?, ?, ?)");
             statement.setInt(1, id);
             statement.setDate(2, Date.valueOf(vacation.getStartOfVacation()));
@@ -658,7 +718,7 @@ public class CompanyDAO {
         sickLeave.getEmployee().setSickLeave(TRUE);
         changeEmployee(sickLeave.getEmployee());
         try {
-            int id = getSickLeaves().size() + 1;
+            int id = availableIDForSickLeaves(getSickLeaves());
             start("INSERT OR REPLACE INTO sick_leave(id, start_of_absence, end_of_absence, employee) VALUES(?, ?, ?, ?)");
             statement.setInt(1, id);
             statement.setDate(2, Date.valueOf(sickLeave.getStartOfAbsence()));
@@ -749,7 +809,7 @@ public class CompanyDAO {
         unpaidLeave.getEmployee().setUnpaidLeave(TRUE);
         changeEmployee(unpaidLeave.getEmployee());
         try {
-            int id = getUnpaidLeaves().size() + 1;
+            int id = availableIDForUnpaidLeaves(getUnpaidLeaves());
             start("INSERT OR REPLACE INTO unpaid_leave(id, start_of_absence, end_of_absence, employee) VALUES(?, ?, ?, ?)");
             statement.setInt(1, id);
             statement.setDate(2, Date.valueOf(unpaidLeave.getStartOfAbsence()));
@@ -785,7 +845,7 @@ public class CompanyDAO {
 
     public void addSalary(Salary s) {
         try {
-            int id = getSalaries().size() + 1;
+            int id = availableIDForSalaries(getSalaries());
             start("INSERT OR REPLACE INTO salary(id, base, coefficient, taxes, contributions, meal_allowances, date, employee) VALUES(?, ?, ?, ?, ?, ?, ?, ?)");
             statement.setInt(1, s.getId());
             statement.setInt(2, s.getBase());
