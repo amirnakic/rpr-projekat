@@ -34,6 +34,11 @@ public class Controller {
     public TableColumn<Employee, String> employeeRole;
     public TableColumn<Employee, String> employeeDepartment;
     public TableColumn<Employee, String> employeeAvailability;
+    public ComboBox<String> monthCombo = new ComboBox<>();
+    public ComboBox<String> yearCombo = new ComboBox<>();
+    public ComboBox<Employee> employeeCombo = new ComboBox<>();
+    public ComboBox<Department> departmentCombo = new ComboBox<>();
+    public Label totalLbl;
     private CompanyDAO company;
     private ObjectProperty<Department> currentDepartment = new SimpleObjectProperty<>();
     private ObjectProperty<Employee> currentEmployee = new SimpleObjectProperty<>();
@@ -82,6 +87,12 @@ public class Controller {
         updateWorkExperience(company.getEmployees());
         if (LocalDate.now().getMonthValue() == 1 && LocalDate.now().getDayOfMonth() == 1)
             updateSalaries(company.getSalaries());
+        monthCombo.getItems().addAll("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
+        for (int i = 1900; i <= LocalDate.now().getYear(); i++) {
+            yearCombo.getItems().add(String.valueOf(i));
+        }
+        employeeCombo.setItems(company.getEmployees());
+        departmentCombo.setItems(company.getDepartments());
     }
 
     public void updateWorkExperience(ObservableList<Employee> employees) {
@@ -390,5 +401,83 @@ public class Controller {
                 alert1.showAndWait();
             }
         }
+    }
+
+    public double calculate(ObservableList<Salary> salaries) {
+        double result = 0;
+        for (Salary s : salaries)
+            result += s.getBase() * s.getCoefficient() + s.getContributions() + s.getMealAllowances() - s.getTaxes();
+        return result;
+    }
+
+    public void clickOnCalculateButton(ActionEvent actionEvent) {
+        int month = 0;
+        if (monthCombo.getValue() == null)
+            month = 0;
+        else {
+            switch (monthCombo.getValue()) {
+                case "January":
+                    month = 1;
+                    break;
+                case "February":
+                    month = 2;
+                    break;
+                case "March":
+                    month = 3;
+                    break;
+                case "April":
+                    month = 4;
+                    break;
+                case "May":
+                    month = 5;
+                    break;
+                case "June":
+                    month = 6;
+                    break;
+                case "July":
+                    month = 7;
+                case "August":
+                    month = 8;
+                    break;
+                case "September":
+                    month = 9;
+                    break;
+                case "October":
+                    month = 10;
+                    break;
+                case "November":
+                    month = 11;
+                    break;
+                case "December":
+                    month = 12;
+                    break;
+            }
+        }
+        if (departmentCombo.getValue() != null && employeeCombo.getValue() == null) {
+            if (month == 0) {
+                if (yearCombo.getValue() == null)
+                    totalLbl.setText(String.valueOf(calculate(company.getAllSalariesFromDepartment(departmentCombo.getValue()))) + " KM");
+                else
+                    totalLbl.setText(String.valueOf(calculate(company.getAllSalariesFromDepartmentInOneYear(Integer.parseInt(yearCombo.getValue()), departmentCombo.getValue()))) + " KM");
+            } else if (yearCombo.getValue() != null)
+                totalLbl.setText(String.valueOf(calculate(company.getAllSalariesFromDepartmentInOneMonth(month, Integer.parseInt(yearCombo.getValue()), departmentCombo.getValue()))) + " KM");
+        } else if (employeeCombo.getValue() != null) {
+            if (month == 0 && yearCombo.getValue() == null)
+                totalLbl.setText(String.valueOf(calculate(company.getAllSalariesForEmployee(employeeCombo.getValue()))) + " KM");
+            else if (month == 0 && yearCombo.getValue() != null)
+                totalLbl.setText(String.valueOf(calculate(company.getAllSalariesForEmployeeInOneYear(Integer.parseInt(yearCombo.getValue()), employeeCombo.getValue()))) + " KM");
+        } else if (departmentCombo.getValue() == null && employeeCombo.getValue() == null) {
+            if (month == 0 && yearCombo.getValue() != null) {
+                totalLbl.setText(String.valueOf(calculate(company.getAllSalariesInOneYear(Integer.parseInt(yearCombo.getValue())))) + " KM");
+            } else if (month != 0 && yearCombo.getValue() != null) {
+                totalLbl.setText(String.valueOf(calculate(company.getAllSalariesInOneMonth(month, Integer.parseInt(yearCombo.getValue())))) + " KM");
+            } else if (month == 0 && yearCombo.getValue() == null) {
+                totalLbl.setText(String.valueOf(calculate(company.getSalaries())) + " KM");
+            }
+        }
+        monthCombo.setValue(null);
+        yearCombo.setValue(null);
+        employeeCombo.setValue(null);
+        departmentCombo.setValue(null);
     }
 }
