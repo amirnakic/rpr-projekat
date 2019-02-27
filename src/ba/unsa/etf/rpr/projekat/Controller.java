@@ -438,6 +438,7 @@ public class Controller {
                     break;
                 case "July":
                     month = 7;
+                    break;
                 case "August":
                     month = 8;
                     break;
