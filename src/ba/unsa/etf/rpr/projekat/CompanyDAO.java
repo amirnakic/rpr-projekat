@@ -3,11 +3,14 @@ package ba.unsa.etf.rpr.projekat;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Scanner;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -32,7 +35,35 @@ public class CompanyDAO {
         try {
             String url = "jdbc:sqlite:company.db";
             conn = DriverManager.getConnection(url);
-            prepareStatement(s);
+            PreparedStatement testStatement = conn.prepareStatement("SELECT * FROM department, salary, employee, sick_leave, unpaid_leave, vacation");
+            testStatement.executeQuery();
+        } catch (SQLException e) {
+            generateDatabase();
+        }
+        prepareStatement(s);
+    }
+
+    private void generateDatabase() {
+        Scanner input = null;
+        try {
+            input = new Scanner(new FileInputStream("company.db.sql"));
+            String sqlStatement = "";
+            while (input.hasNext()) {
+                sqlStatement += input.nextLine();
+                if (sqlStatement.charAt(sqlStatement.length() - 1) == ';') {
+                    try {
+                        Statement stmt = conn.createStatement();
+                        stmt.execute(sqlStatement);
+                        sqlStatement = "";
+                    } catch (SQLException e) {
+                        conn.close();
+                        e.printStackTrace();
+                    }
+                }
+            }
+            input.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
