@@ -919,8 +919,8 @@ public class CompanyDAO {
                 Salary s = new Salary();
                 s.setId(rs.getInt(1));
                 s.setBase(rs.getInt(2));
-                s.setTaxes(rs.getInt(3));
-                s.setCoefficient(rs.getInt(4));
+                s.setCoefficient(rs.getInt(3));
+                s.setTaxes(rs.getInt(4));
                 s.setContributions(rs.getInt(5));
                 s.setMealAllowances(rs.getInt(6));
                 s.setDate(rs.getDate(7).toLocalDate());
